@@ -13,6 +13,7 @@ signal clicked(item)
 var current_slot = null
 var stack = []
 var cook_state = CookState.NONE
+var visual_cook_state = CookState.NONE
 var cooking_id = 0
 
 func _ready():
@@ -21,6 +22,7 @@ func _ready():
 	stack.append(type)
 	if type == ItemType.STEAK:
 		cook_state = CookState.RAW
+		visual_cook_state = CookState.RAW
 	rebuild_visual()
 
 func _on_input_event(camera, event, position, normal, shape_idx):
@@ -79,19 +81,20 @@ func rebuild_visual():
 			ItemType.STEAK:
 				mesh.mesh = BoxMesh.new()
 				mesh.scale = Vector3(0.9, 0.2, 0.9)
-
-				match cook_state:
+				var steak_state = visual_cook_state
+				
+				match steak_state:
 					CookState.RAW:
-						mesh.material_override = _mat(Color(1.0, 0.3, 0.3)) # rouge
+						mesh.material_override = _mat(Color(1.0, 0.3, 0.3))
 
 					CookState.COOKING:
-						mesh.material_override = _mat(Color(1.0, 0.6, 0.2)) # orange
+						mesh.material_override = _mat(Color(1.0, 0.3, 0.3))
 
 					CookState.COOKED:
-						mesh.material_override = _mat(Color(0.4, 0.2, 0.1)) # brun
+						mesh.material_override = _mat(Color(0.4, 0.2, 0.1))
 
 					CookState.BURNT:
-						mesh.material_override = _mat(Color(0.1, 0.1, 0.1)) # noir
+						mesh.material_override = _mat(Color(0.1, 0.1, 0.1))
 
 			ItemType.CHEESE:
 				mesh.mesh = BoxMesh.new()

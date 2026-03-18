@@ -15,12 +15,38 @@ func place_item(item):
 	item.global_position = global_position + Vector3(0, 0.5, 0)
 
 	start_cooking(item)
-
 func start_cooking(item):
+
+	if item.cook_state == item.CookState.BURNT:
+		return
+
 	item.cooking_id += 1
 	var id = item.cooking_id
 
+	if item.cook_state == item.CookState.COOKED:
+
+		item.cook_state = item.CookState.COOKING
+		item.visual_cook_state = item.CookState.COOKED
+		item.rebuild_visual()
+		print("RECOOKING...")
+
+		await get_tree().create_timer(3).timeout
+
+		if id != item.cooking_id:
+			return
+		if item.current_slot != self:
+			return
+
+		item.cook_state = item.CookState.BURNT
+		item.visual_cook_state = item.CookState.BURNT
+		item.rebuild_visual()
+		print("BRULÉ")
+
+		return
+
+
 	item.cook_state = item.CookState.COOKING
+	item.visual_cook_state = item.CookState.RAW
 	item.rebuild_visual()
 	print("COOKING...")
 
@@ -28,11 +54,11 @@ func start_cooking(item):
 
 	if id != item.cooking_id:
 		return
-
 	if item.current_slot != self:
 		return
 
 	item.cook_state = item.CookState.COOKED
+	item.visual_cook_state = item.CookState.COOKED
 	item.rebuild_visual()
 	print("CUIT")
 
@@ -40,11 +66,11 @@ func start_cooking(item):
 
 	if id != item.cooking_id:
 		return
-
 	if item.current_slot != self:
 		return
 
 	item.cook_state = item.CookState.BURNT
+	item.visual_cook_state = item.CookState.BURNT
 	item.rebuild_visual()
 	print("BRULÉ")
 
