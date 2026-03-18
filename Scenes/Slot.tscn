@@ -4,7 +4,7 @@
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_vqo0j"]
 size = Vector2(1.5, 1.5)
-center_offset = Vector3(0, 0.1, 0)
+center_offset = Vector3(0, 0.01, 0)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vqo0j"]
 albedo_color = Color(0.21176471, 0.27450982, 1, 1)

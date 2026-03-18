@@ -1,6 +1,8 @@
 extends Node3D
 
 enum ItemType { BUN, STEAK, CHEESE, TOMATO, SALAD, ONION }
+enum CookState { NONE, RAW, COOKING, COOKED, BURNT }
+
 @export var type: ItemType
 
 signal clicked(item)
@@ -10,11 +12,15 @@ signal clicked(item)
 
 var current_slot = null
 var stack = []
+var cook_state = CookState.NONE
+var cooking_id = 0
 
 func _ready():
 	add_to_group("item")
 	area.input_event.connect(_on_input_event)
 	stack.append(type)
+	if type == ItemType.STEAK:
+		cook_state = CookState.RAW
 	rebuild_visual()
 
 func _on_input_event(camera, event, position, normal, shape_idx):
@@ -30,8 +36,7 @@ func can_merge(other):
 	match last:
 
 		ItemType.BUN:
-			# début → steak uniquement
-			return other.type == ItemType.STEAK
+			return other.type == ItemType.STEAK and other.cook_state == CookState.COOKED
 
 		ItemType.STEAK:
 			# après steak → tout sauf steak
@@ -74,7 +79,19 @@ func rebuild_visual():
 			ItemType.STEAK:
 				mesh.mesh = BoxMesh.new()
 				mesh.scale = Vector3(0.9, 0.2, 0.9)
-				mesh.material_override = _mat(Color(0.4, 0.2, 0.1))
+
+				match cook_state:
+					CookState.RAW:
+						mesh.material_override = _mat(Color(1.0, 0.3, 0.3)) # rouge
+
+					CookState.COOKING:
+						mesh.material_override = _mat(Color(1.0, 0.6, 0.2)) # orange
+
+					CookState.COOKED:
+						mesh.material_override = _mat(Color(0.4, 0.2, 0.1)) # brun
+
+					CookState.BURNT:
+						mesh.material_override = _mat(Color(0.1, 0.1, 0.1)) # noir
 
 			ItemType.CHEESE:
 				mesh.mesh = BoxMesh.new()

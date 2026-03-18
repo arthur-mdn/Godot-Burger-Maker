@@ -50,10 +50,8 @@ func try_drop():
 	if result:
 		var collider = result.collider
 
-		# si c'est un slot
 		if collider.get_parent().has_method("place_item"):
-			var slot = collider.get_parent()
-			print("TRY PLACE")
-			slot.place_item(held_item)
+			var target = collider.get_parent()
+			target.place_item(held_item)
 
 	held_item = null
