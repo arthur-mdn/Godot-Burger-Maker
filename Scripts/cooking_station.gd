@@ -12,7 +12,7 @@ func place_item(item) -> bool:
 
 	current_item = item
 	item.current_slot = self
-	item.global_position = global_position + Vector3(0, 0.5, 0)
+	item.global_position = global_position + Vector3(0, 0.1, 0)
 	start_cooking(item)
 	return true
 

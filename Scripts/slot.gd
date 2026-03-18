@@ -9,7 +9,7 @@ func place_item(item) -> bool:
 	if current_item == null:
 		current_item = item
 		item.current_slot = self
-		item.global_position = global_position + Vector3(0, 0.5, 0)
+		item.global_position = global_position  # posé directement sur la surface
 		return true
 	else:
 		if current_item.can_merge(item):

@@ -22,7 +22,7 @@ func place_item(item) -> bool:
 
 	current_item = item
 	item.current_slot = self
-	item.global_position = global_position + Vector3(0, 0.3, 0)
+	item.global_position = global_position + Vector3(0, 0.1, 0)
 
 	chop_progress = 0.0
 	is_chopping = true
@@ -45,10 +45,7 @@ func _process(delta: float):
 func _update_progress_bar(pct: float):
 	if not is_instance_valid(progress_mesh):
 		return
-	# La barre fait 1.2 d'unité de large (BoxMesh size.x).
-	# Le fond (ProgressBg) va de -0.6 à +0.6 en X local.
-	# On scale depuis le centre → on compense la position pour ancrer à gauche.
-	var half_width := 0.6  # moitié de la taille du BoxMesh (1.2 / 2)
+	var half_width := 0.6
 	var p := maxf(pct, 0.01)
 	progress_mesh.scale.x = p
 	progress_mesh.position.x = -half_width + half_width * p

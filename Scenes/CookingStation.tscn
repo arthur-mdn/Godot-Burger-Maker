@@ -9,6 +9,7 @@ albedo_color = Color(0.18431373, 1, 1, 1)
 material = SubResource("StandardMaterial3D_yt4nv")
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_2vt2k"]
+size = Vector3(1.4, 0.08, 1.4)
 
 [node name="CookingStation" type="Node3D" unique_id=342943021]
 script = ExtResource("1_e3c22")
@@ -18,7 +19,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.01, 0)
 mesh = SubResource("PlaneMesh_js4rr")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=769331985]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.04, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=1530679936]
 shape = SubResource("BoxShape3D_2vt2k")
