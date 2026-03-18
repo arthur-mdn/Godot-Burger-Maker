@@ -103,13 +103,18 @@ func _begin_cooking(item):
 		_start_phase("cooking", COOK_TIME)
 
 func remove_item():
+	var phase_at_removal := _phase
 	_stop_bar()
 
 	if current_item:
 		current_item.cooking_id += 1
-		if current_item.cook_state == current_item.CookState.COOKING:
+		if phase_at_removal == "cooking":
 			current_item.cook_state        = current_item.CookState.RAW
 			current_item.visual_cook_state = current_item.CookState.RAW
+			current_item.rebuild_visual()
+		elif phase_at_removal == "burning":
+			current_item.cook_state        = current_item.CookState.COOKED
+			current_item.visual_cook_state = current_item.CookState.COOKED
 			current_item.rebuild_visual()
 
 	var item = current_item
