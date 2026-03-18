@@ -31,9 +31,8 @@ func start_cooking(item):
 
 		await get_tree().create_timer(3).timeout
 
-		if id != item.cooking_id or item.current_slot != self:
+		if not is_instance_valid(item) or id != item.cooking_id or item.current_slot != self:
 			return
-
 		item.cook_state = item.CookState.BURNT
 		item.visual_cook_state = item.CookState.BURNT
 		item.rebuild_visual()
@@ -47,9 +46,8 @@ func start_cooking(item):
 
 	await get_tree().create_timer(5).timeout
 
-	if id != item.cooking_id or item.current_slot != self:
+	if not is_instance_valid(item) or id != item.cooking_id or item.current_slot != self:
 		return
-
 	item.cook_state = item.CookState.COOKED
 	item.visual_cook_state = item.CookState.COOKED
 	item.rebuild_visual()
@@ -57,9 +55,8 @@ func start_cooking(item):
 
 	await get_tree().create_timer(3).timeout
 
-	if id != item.cooking_id or item.current_slot != self:
+	if not is_instance_valid(item) or id != item.cooking_id or item.current_slot != self:
 		return
-
 	item.cook_state = item.CookState.BURNT
 	item.visual_cook_state = item.CookState.BURNT
 	item.rebuild_visual()

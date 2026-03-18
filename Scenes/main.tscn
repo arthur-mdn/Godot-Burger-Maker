@@ -3,9 +3,9 @@
 [ext_resource type="Script" uid="uid://bsxthgff40cmm" path="res://Scripts/main.gd" id="1_bo1nx"]
 [ext_resource type="PackedScene" uid="uid://jfq2wtbu027h" path="res://Scenes/Slot.tscn" id="3_8gbba"]
 [ext_resource type="PackedScene" uid="uid://bwgai41orblj" path="res://Scenes/CookingStation.tscn" id="4_jjvhh"]
-[ext_resource type="PackedScene" path="res://Scenes/Dispenser.tscn" id="5_kry3j"]
+[ext_resource type="PackedScene" uid="uid://dsgpxemmoc601" path="res://Scenes/Dispenser.tscn" id="5_kry3j"]
 [ext_resource type="PackedScene" path="res://Scenes/Trash.tscn" id="6_trash"]
-[ext_resource type="PackedScene" path="res://Scenes/CuttingBoard.tscn" id="7_cb"]
+[ext_resource type="PackedScene" uid="uid://c2cnq2dxoljcq" path="res://Scenes/CuttingBoard.tscn" id="7_cb"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_7u77a"]
 size = Vector2(10, 10)
@@ -14,7 +14,7 @@ size = Vector2(10, 10)
 script = ExtResource("1_bo1nx")
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=598334780]
-transform = Transform3D(-4.0461565e-08, -0.9220862, 0.38698462, -1.653925e-08, 0.38698462, 0.9220862, -1, 3.090862e-08, -3.090862e-08, 4.0711193, 8, 0)
+transform = Transform3D(-4.3589253e-08, -0.6523101, 0.7579523, 3.2652425e-09, 0.7579523, 0.6523101, -1, 3.0908605e-08, -3.0908623e-08, 5.985379, 3.5150232, 0)
 current = true
 
 [node name="Light" type="DirectionalLight3D" parent="." unique_id=1074441236]
@@ -58,8 +58,8 @@ item_type = 4
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.1184683, 0, -4.6752715)
 item_type = 5
 
-[node name="Trash" parent="." instance=ExtResource("6_trash")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3.5)
+[node name="Trash" parent="." unique_id=1024929892 instance=ExtResource("6_trash")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.301402, 0, -3.5)
 
-[node name="CuttingBoard" parent="." instance=ExtResource("7_cb")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.0)
+[node name="CuttingBoard" parent="." unique_id=1178119326 instance=ExtResource("7_cb")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2)
