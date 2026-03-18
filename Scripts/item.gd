@@ -15,6 +15,7 @@ var stack = []
 var cook_state = CookState.NONE
 var visual_cook_state = CookState.NONE
 var cooking_id = 0
+var is_chopped: bool = false
 
 func _ready():
 	add_to_group("item")
@@ -32,7 +33,6 @@ func _on_input_event(_camera, event, _position, _normal, _shape_idx):
 		emit_signal("clicked", self)
 
 func can_merge(other) -> bool:
-	# Un burger complet ne peut plus recevoir d'ingrédient
 	if is_complete():
 		return false
 
@@ -40,19 +40,24 @@ func can_merge(other) -> bool:
 
 	match last:
 		ItemType.BUN:
-			# BUN du bas (seul) → accepte uniquement un steak cuit
 			if stack.size() == 1:
 				return other.type == ItemType.STEAK and other.cook_state == CookState.COOKED
-			# BUN de fermeture → rien à ajouter
 			return false
 
 		ItemType.STEAK:
-			# Après le steak : toppings ou BUN de fermeture, pas de second steak
-			return other.type != ItemType.STEAK
+			if other.type == ItemType.STEAK:
+				return false
+			# TOMATO et ONION doivent être coupés
+			if other.type == ItemType.TOMATO or other.type == ItemType.ONION:
+				return other.is_chopped
+			return true
 
 		ItemType.CHEESE, ItemType.TOMATO, ItemType.SALAD, ItemType.ONION:
-			# Après un topping : autre topping ou BUN de fermeture, pas de steak
-			return other.type != ItemType.STEAK
+			if other.type == ItemType.STEAK:
+				return false
+			if other.type == ItemType.TOMATO or other.type == ItemType.ONION:
+				return other.is_chopped
+			return true
 
 	return false
 
@@ -85,7 +90,7 @@ func rebuild_visual():
 				mesh.scale = Vector3(0.9, 0.2, 0.9)
 				match visual_cook_state:
 					CookState.RAW:     mesh.material_override = _mat(Color(1.0, 0.3, 0.3))
-					CookState.COOKING: mesh.material_override = _mat(Color(0.9, 0.25, 0.05)) # orange
+					CookState.COOKING: mesh.material_override = _mat(Color(0.9, 0.25, 0.05))
 					CookState.COOKED:  mesh.material_override = _mat(Color(0.4, 0.2, 0.1))
 					CookState.BURNT:   mesh.material_override = _mat(Color(0.1, 0.1, 0.1))
 
@@ -96,8 +101,9 @@ func rebuild_visual():
 
 			ItemType.TOMATO:
 				mesh.mesh = BoxMesh.new()
-				mesh.scale = Vector3(0.9, 0.1, 0.9)
-				mesh.material_override = _mat(Color(1.0, 0.2, 0.2))
+				# Coupée : plus mince et rouge vif
+				mesh.scale = Vector3(0.9, 0.06 if is_chopped else 0.12, 0.9)
+				mesh.material_override = _mat(Color(1.0, 0.1, 0.1) if is_chopped else Color(1.0, 0.2, 0.2))
 
 			ItemType.SALAD:
 				mesh.mesh = BoxMesh.new()
@@ -106,8 +112,9 @@ func rebuild_visual():
 
 			ItemType.ONION:
 				mesh.mesh = BoxMesh.new()
-				mesh.scale = Vector3(0.9, 0.08, 0.9)
-				mesh.material_override = _mat(Color(0.8, 0.7, 1.0))
+				# Coupé : plus mince et violet plus vif
+				mesh.scale = Vector3(0.9, 0.04 if is_chopped else 0.08, 0.9)
+				mesh.material_override = _mat(Color(0.95, 0.85, 1.0) if is_chopped else Color(0.8, 0.7, 1.0))
 
 		mesh.position.y = height
 		height += mesh.scale.y

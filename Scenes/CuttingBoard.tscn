@@ -1,0 +1,44 @@
+[gd_scene format=3 uid="uid://c2cnq2dxoljcq"]
+
+[ext_resource type="Script" uid="uid://chbwmx0ia2scw" path="res://Scripts/cutting_board.gd" id="1_cb"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_board"]
+size = Vector3(1.4, 0.08, 1.4)
+
+[sub_resource type="StandardMaterial3D" id="Mat_board"]
+albedo_color = Color(0.72, 0.52, 0.3, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_bg"]
+size = Vector3(1.2, 0.05, 0.2)
+
+[sub_resource type="StandardMaterial3D" id="Mat_bg"]
+albedo_color = Color(0.15, 0.15, 0.15, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_progress"]
+size = Vector3(1.2, 0.06, 0.16)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_cb"]
+size = Vector3(1.4, 0.6, 1.4)
+
+[node name="CuttingBoard" type="Node3D" unique_id=822569675]
+script = ExtResource("1_cb")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1180065681]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.01, 0)
+mesh = SubResource("BoxMesh_board")
+surface_material_override/0 = SubResource("Mat_board")
+
+[node name="ProgressBg" type="MeshInstance3D" parent="." unique_id=1176819350]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0.62)
+mesh = SubResource("BoxMesh_bg")
+surface_material_override/0 = SubResource("Mat_bg")
+
+[node name="ProgressMesh" type="MeshInstance3D" parent="." unique_id=1364088601]
+transform = Transform3D(0.01, 0, 0, 0, 1, 0, 0, 0, 1, -0.595, 0.11, 0.62)
+mesh = SubResource("BoxMesh_progress")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=663132478]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=1358983493]
+shape = SubResource("BoxShape3D_cb")
