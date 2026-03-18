@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://jfq2wtbu027h"]
+
+[ext_resource type="Script" uid="uid://dy6ioagh0yonn" path="res://Scripts/slot.gd" id="1_vqo0j"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_vqo0j"]
+size = Vector2(1.5, 1.5)
+center_offset = Vector3(0, 0.1, 0)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vqo0j"]
+albedo_color = Color(0.21176471, 0.27450982, 1, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_vqo0j"]
+
+[node name="Slot" type="Node3D" unique_id=1704538850]
+script = ExtResource("1_vqo0j")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1451935316]
+mesh = SubResource("PlaneMesh_vqo0j")
+surface_material_override/0 = SubResource("StandardMaterial3D_vqo0j")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=1799844182]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=1602761212]
+shape = SubResource("BoxShape3D_vqo0j")
