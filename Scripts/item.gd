@@ -120,13 +120,13 @@ func _mesh_height_for(t: int) -> float:
 
 func rebuild_visual():
 	for child in stack_root.get_children():
-		child.queue_free()
+		child.free()
 
 	stack_root.position = Vector3.ZERO
 
 	var height = 0.0
-	# Pain du haut semi-transparent uniquement quand les 2 pains sont posés et burger incomplet
-	var has_top_bun = (_bun_count() == 2 and not is_complete())
+	# Pain du haut semi-transparent uniquement quand les 2 pains sont posés
+	var has_top_bun = (_bun_count() == 2)
 
 	for i in range(stack.size()):
 		var t = stack[i]
@@ -138,7 +138,8 @@ func rebuild_visual():
 				mesh.mesh = BoxMesh.new()
 				mesh.scale = Vector3(1, mesh_height, 1)
 				var is_top_bun = has_top_bun and (i == stack.size() - 1)
-				var color = Color(0.8, 0.6, 0.3, 0.35 if is_top_bun else 1.0)
+				var alpha = 0.4 if is_top_bun else 1.0
+				var color = Color(0.8, 0.6, 0.3, alpha)
 				mesh.material_override = _mat(color, is_top_bun)
 
 			ItemType.STEAK:
@@ -181,6 +182,9 @@ func _mat(color: Color, transparent: bool = false) -> StandardMaterial3D:
 	mat.albedo_color = color
 	if transparent:
 		mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		mat.depth_draw_mode = BaseMaterial3D.DEPTH_DRAW_DISABLED
+		mat.render_priority = 1  # rendu après tous les meshes opaques
+		mat.cull_mode = BaseMaterial3D.CULL_BACK
 	return mat
 
 # ── Complétion ────────────────────────────────────────────────────────────────
