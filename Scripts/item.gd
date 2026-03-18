@@ -25,27 +25,33 @@ func _ready():
 		visual_cook_state = CookState.RAW
 	rebuild_visual()
 
-func _on_input_event(camera, event, position, normal, shape_idx):
+func _on_input_event(_camera, event, _position, _normal, _shape_idx):
 	if event is InputEventMouseButton \
 	and event.pressed \
 	and event.button_index == MOUSE_BUTTON_LEFT:
-		print("ITEM CLICKED")
 		emit_signal("clicked", self)
 
-func can_merge(other):
+func can_merge(other) -> bool:
+	# Un burger complet ne peut plus recevoir d'ingrédient
+	if is_complete():
+		return false
+
 	var last = stack.back()
 
 	match last:
-
 		ItemType.BUN:
-			return other.type == ItemType.STEAK and other.cook_state == CookState.COOKED
+			# BUN du bas (seul) → accepte uniquement un steak cuit
+			if stack.size() == 1:
+				return other.type == ItemType.STEAK and other.cook_state == CookState.COOKED
+			# BUN de fermeture → rien à ajouter
+			return false
 
 		ItemType.STEAK:
-			# après steak → tout sauf steak
+			# Après le steak : toppings ou BUN de fermeture, pas de second steak
 			return other.type != ItemType.STEAK
 
 		ItemType.CHEESE, ItemType.TOMATO, ItemType.SALAD, ItemType.ONION:
-			# après topping → topping ou bun final
+			# Après un topping : autre topping ou BUN de fermeture, pas de steak
 			return other.type != ItemType.STEAK
 
 	return false
@@ -53,17 +59,13 @@ func can_merge(other):
 func merge(other):
 	for t in other.stack:
 		stack.append(t)
-
 	other.queue_free()
-
 	rebuild_visual()
-
 	print("STACK :", stack)
 	if is_complete():
-		print("BURGER COMPLET")
+		print("✅ BURGER COMPLET !")
 
 func rebuild_visual():
-	# clear
 	for child in stack_root.get_children():
 		child.queue_free()
 
@@ -81,25 +83,17 @@ func rebuild_visual():
 			ItemType.STEAK:
 				mesh.mesh = BoxMesh.new()
 				mesh.scale = Vector3(0.9, 0.2, 0.9)
-				var steak_state = visual_cook_state
-				
-				match steak_state:
-					CookState.RAW:
-						mesh.material_override = _mat(Color(1.0, 0.3, 0.3))
-
-					CookState.COOKING:
-						mesh.material_override = _mat(Color(1.0, 0.3, 0.3))
-
-					CookState.COOKED:
-						mesh.material_override = _mat(Color(0.4, 0.2, 0.1))
-
-					CookState.BURNT:
-						mesh.material_override = _mat(Color(0.1, 0.1, 0.1))
+				match visual_cook_state:
+					CookState.RAW:     mesh.material_override = _mat(Color(1.0, 0.3, 0.3))
+					CookState.COOKING: mesh.material_override = _mat(Color(0.9, 0.25, 0.05)) # orange
+					CookState.COOKED:  mesh.material_override = _mat(Color(0.4, 0.2, 0.1))
+					CookState.BURNT:   mesh.material_override = _mat(Color(0.1, 0.1, 0.1))
 
 			ItemType.CHEESE:
 				mesh.mesh = BoxMesh.new()
 				mesh.scale = Vector3(0.9, 0.1, 0.9)
 				mesh.material_override = _mat(Color(1.0, 0.8, 0.2))
+
 			ItemType.TOMATO:
 				mesh.mesh = BoxMesh.new()
 				mesh.scale = Vector3(0.9, 0.1, 0.9)
@@ -117,24 +111,18 @@ func rebuild_visual():
 
 		mesh.position.y = height
 		height += mesh.scale.y
-
 		stack_root.add_child(mesh)
 
-func _mat(color):
+func _mat(color: Color) -> StandardMaterial3D:
 	var mat = StandardMaterial3D.new()
 	mat.albedo_color = color
 	return mat
 
-func is_complete():
+func is_complete() -> bool:
 	if stack.size() < 3:
 		return false
-
-	# doit commencer et finir par bun
 	if stack.front() != ItemType.BUN:
 		return false
 	if stack.back() != ItemType.BUN:
 		return false
-
-	# doit contenir au moins 1 steak
 	return ItemType.STEAK in stack
-	

@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://dvfkbxfrdhsvh"]
 
 [ext_resource type="Script" uid="uid://bsxthgff40cmm" path="res://Scripts/main.gd" id="1_bo1nx"]
-[ext_resource type="PackedScene" uid="uid://bhir52ci487ll" path="res://Scenes/Item.tscn" id="2_8gbba"]
 [ext_resource type="PackedScene" uid="uid://jfq2wtbu027h" path="res://Scenes/Slot.tscn" id="3_8gbba"]
 [ext_resource type="PackedScene" uid="uid://bwgai41orblj" path="res://Scenes/CookingStation.tscn" id="4_jjvhh"]
+[ext_resource type="PackedScene" path="res://Scenes/Dispenser.tscn" id="5_kry3j"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_7u77a"]
 size = Vector2(10, 10)
@@ -27,27 +27,31 @@ mesh = SubResource("PlaneMesh_7u77a")
 
 [node name="UI" type="CanvasLayer" parent="." unique_id=1082096194]
 
-[node name="Bun" parent="." unique_id=366931120 instance=ExtResource("2_8gbba")]
-
-[node name="Bun2" parent="." unique_id=536319745 instance=ExtResource("2_8gbba")]
-
-[node name="Steak" parent="." unique_id=1157937057 instance=ExtResource("2_8gbba")]
-type = 1
-
-[node name="Cheese" parent="." unique_id=779436585 instance=ExtResource("2_8gbba")]
-type = 2
-
-[node name="Tomato" parent="." unique_id=781106659 instance=ExtResource("2_8gbba")]
-type = 3
-
-[node name="Salad" parent="." unique_id=1331339323 instance=ExtResource("2_8gbba")]
-type = 4
-
-[node name="Onion" parent="." unique_id=1377860936 instance=ExtResource("2_8gbba")]
-type = 5
-
 [node name="Slot" parent="." unique_id=1704538850 instance=ExtResource("3_8gbba")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 2.675147)
 
 [node name="CookingStation" parent="." unique_id=342943021 instance=ExtResource("4_jjvhh")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.8338108, 0, -0.32542658)
+
+[node name="Dispenser-bun" parent="." unique_id=329454914 instance=ExtResource("5_kry3j")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.1184683, 0, 4.8600845)
+
+[node name="Dispenser-steak" parent="." unique_id=703650110 instance=ExtResource("5_kry3j")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.1184683, 0, 2.992006)
+item_type = 1
+
+[node name="Dispenser-cheese" parent="." unique_id=2049787066 instance=ExtResource("5_kry3j")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.1184683, 0, 1.151921)
+item_type = 2
+
+[node name="Dispenser-tomato" parent="." unique_id=937416247 instance=ExtResource("5_kry3j")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.1184683, 0, -0.9574368)
+item_type = 3
+
+[node name="Dispenser-salad" parent="." unique_id=768069161 instance=ExtResource("5_kry3j")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.1184683, 0, -2.9215617)
+item_type = 4
+
+[node name="Dispenser-onion" parent="." unique_id=639436428 instance=ExtResource("5_kry3j")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.1184683, 0, -4.6752715)
+item_type = 5
