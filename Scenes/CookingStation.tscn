@@ -2,24 +2,43 @@
 
 [ext_resource type="Script" uid="uid://cwi70u8pt4ybt" path="res://Scripts/cooking_station.gd" id="1_e3c22"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_yt4nv"]
-albedo_color = Color(0.18431373, 1, 1, 1)
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_e3c22"]
+albedo_color = Color(0.08627451, 1, 1, 1)
 
-[sub_resource type="PlaneMesh" id="PlaneMesh_js4rr"]
-material = SubResource("StandardMaterial3D_yt4nv")
+[sub_resource type="BoxMesh" id="BoxMesh_e3c22"]
+material = SubResource("StandardMaterial3D_e3c22")
+size = Vector3(1.4, 0.08, 1.4)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_2vt2k"]
 size = Vector3(1.4, 0.08, 1.4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_yt4nv"]
+size = Vector3(1.2, 0.05, 0.2)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_js4rr"]
+albedo_color = Color(0.15, 0.15, 0.15, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_2vt2k"]
+size = Vector3(1.2, 0.06, 0.16)
 
 [node name="CookingStation" type="Node3D" unique_id=342943021]
 script = ExtResource("1_e3c22")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1246449340]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.01, 0)
-mesh = SubResource("PlaneMesh_js4rr")
+mesh = SubResource("BoxMesh_e3c22")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=769331985]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.04, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=1530679936]
 shape = SubResource("BoxShape3D_2vt2k")
+
+[node name="ProgressBg" type="MeshInstance3D" parent="." unique_id=1249988879]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0.62)
+mesh = SubResource("BoxMesh_yt4nv")
+surface_material_override/0 = SubResource("StandardMaterial3D_js4rr")
+
+[node name="ProgressMesh" type="MeshInstance3D" parent="." unique_id=908838274]
+transform = Transform3D(0.01, 0, 0, 0, 1, 0, 0, 0, 1, -0.595, 0.11, 0.62)
+mesh = SubResource("BoxMesh_2vt2k")

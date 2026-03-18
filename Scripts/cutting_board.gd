@@ -50,7 +50,7 @@ func _update_progress_bar(pct: float):
 	progress_mesh.scale.x = p
 	progress_mesh.position.x = -half_width + half_width * p
 	var mat = StandardMaterial3D.new()
-	mat.albedo_color = Color(1.0 - pct, pct, 0.0)
+	mat.albedo_color = Color(0.1, 0.85, 0.1)
 	progress_mesh.material_override = mat
 
 func remove_item():
