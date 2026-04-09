@@ -8,6 +8,7 @@
 [ext_resource type="Script" uid="uid://c78nbccfty34y" path="res://Scripts/order_manager.gd" id="7_6bp64"]
 [ext_resource type="PackedScene" uid="uid://c2cnq2dxoljcq" path="res://Scenes/CuttingBoard.tscn" id="7_cb"]
 [ext_resource type="PackedScene" uid="uid://dyiu5aj8yyv8d" path="res://Scenes/ServingStation.tscn" id="8_344ge"]
+[ext_resource type="Script" uid="uid://bxfuasdv4famg" path="res://Scenes/level_manager.gd" id="9_ynf5e"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_7u77a"]
 size = Vector2(10, 10)
@@ -29,50 +30,71 @@ shadow_enabled = true
 [node name="MeshInstance3D" type="MeshInstance3D" parent="World" unique_id=1819151431]
 mesh = SubResource("PlaneMesh_7u77a")
 
-[node name="UI" type="CanvasLayer" parent="." unique_id=1082096194]
+[node name="Stations" type="Node3D" parent="World" unique_id=302124271]
 
-[node name="Slot" parent="." unique_id=1704538850 instance=ExtResource("3_8gbba")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 2.675147)
-
-[node name="CookingStation" parent="." unique_id=342943021 instance=ExtResource("4_jjvhh")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.8338108, 0, -0.32542658)
-
-[node name="Dispenser-bun" parent="." unique_id=329454914 instance=ExtResource("5_kry3j")]
+[node name="Dispenser_Bun" parent="World/Stations" unique_id=329454914 instance=ExtResource("5_kry3j")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.1184683, 0, 4.8600845)
 
-[node name="Dispenser-steak" parent="." unique_id=703650110 instance=ExtResource("5_kry3j")]
+[node name="Dispenser_Steak" parent="World/Stations" unique_id=703650110 instance=ExtResource("5_kry3j")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.1184683, 0, 2.992006)
 item_type = 1
 
-[node name="Dispenser-cheese" parent="." unique_id=2049787066 instance=ExtResource("5_kry3j")]
+[node name="Dispenser_Cheese" parent="World/Stations" unique_id=2049787066 instance=ExtResource("5_kry3j")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.1184683, 0, 1.151921)
 item_type = 2
 
-[node name="Dispenser-tomato" parent="." unique_id=937416247 instance=ExtResource("5_kry3j")]
+[node name="Dispenser_Tomato" parent="World/Stations" unique_id=937416247 instance=ExtResource("5_kry3j")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.1184683, 0, -0.9574368)
 item_type = 3
 
-[node name="Dispenser-salad" parent="." unique_id=768069161 instance=ExtResource("5_kry3j")]
+[node name="Dispenser_Salad" parent="World/Stations" unique_id=768069161 instance=ExtResource("5_kry3j")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.1184683, 0, -2.9215617)
 item_type = 4
 
-[node name="Dispenser-onion" parent="." unique_id=639436428 instance=ExtResource("5_kry3j")]
+[node name="Dispenser_Onion" parent="World/Stations" unique_id=639436428 instance=ExtResource("5_kry3j")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.1184683, 0, -4.6752715)
 item_type = 5
 
-[node name="Trash" parent="." unique_id=1024929892 instance=ExtResource("6_trash")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.301402, 0, -3.5)
+[node name="Cooking_1" parent="World/Stations" unique_id=342943021 instance=ExtResource("4_jjvhh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.04156208, 0, -0.32542658)
 
-[node name="CuttingBoard" parent="." unique_id=1178119326 instance=ExtResource("7_cb")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2)
+[node name="Cooking_2" parent="World/Stations" unique_id=1783589009 instance=ExtResource("4_jjvhh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.06577778, 0, -1.9006033)
+
+[node name="Cutting_1" parent="World/Stations" unique_id=1178119326 instance=ExtResource("7_cb")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3.3990796)
+
+[node name="Cutting_2" parent="World/Stations" unique_id=822569675 instance=ExtResource("7_cb")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.8219886)
+
+[node name="Slot_1" parent="World/Stations" unique_id=1704538850 instance=ExtResource("3_8gbba")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 3.1803942)
+
+[node name="Slot_2" parent="World/Stations" unique_id=1331880924 instance=ExtResource("3_8gbba")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 1.540688)
+
+[node name="Slot_3" parent="World/Stations" unique_id=342638352 instance=ExtResource("3_8gbba")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, -0.08845782)
+
+[node name="Slot_4" parent="World/Stations" unique_id=63078546 instance=ExtResource("3_8gbba")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, -1.7293959)
+
+[node name="Trash" parent="World/Stations" unique_id=1024929892 instance=ExtResource("6_trash")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.098061, 0, -3.8619277)
+
+[node name="ServingStation" parent="World/Stations" unique_id=1885268490 node_paths=PackedStringArray("order_manager", "game_manager") instance=ExtResource("8_344ge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.041450024, 0, -4.0795374)
+order_manager = NodePath("../../../OrderManager")
+game_manager = NodePath("../../..")
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=1082096194]
 
 [node name="OrderManager" type="Node3D" parent="." unique_id=1096114686 node_paths=PackedStringArray("order_label")]
 script = ExtResource("7_6bp64")
 order_label = NodePath("../CanvasLayer/OrderLabel")
 
-[node name="ServingStation" parent="." unique_id=1885268490 node_paths=PackedStringArray("order_manager") instance=ExtResource("8_344ge")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.2490947)
-order_manager = NodePath("../OrderManager")
+[node name="LevelManager" type="Node3D" parent="." unique_id=190643755]
+script = ExtResource("9_ynf5e")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1434321409]
 

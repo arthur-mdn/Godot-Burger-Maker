@@ -1,24 +1,29 @@
 extends Node
 
 var orders = []
+var available_orders = []
 @export var order_label: RichTextLabel
-
-const ORDER_POOL = [
-	[0, 1, 0],
-	[0, 1, 2, 0],
-	[0, 1, 3, 0],
-]
 
 const MAX_ORDERS := 3
 const ORDER_TIME := 40.0
 
-
 func _ready():
 	print("OrderManager OK")
 
-	generate_order()
-	generate_order()
+func set_level_orders(new_orders):
+	available_orders = new_orders.duplicate(true)
 
+func clear_orders():
+	orders.clear()
+	update_ui()
+
+func start_orders(initial_count := 2):
+	orders.clear()
+
+	for i in range(initial_count):
+		generate_order()
+
+	update_ui()
 
 func _process(delta):
 	var expired_indexes = []
@@ -29,31 +34,32 @@ func _process(delta):
 		if orders[i]["time_left"] <= 0:
 			expired_indexes.append(i)
 
-	# on supprime à l’envers pour éviter les décalages d’index
 	for i in range(expired_indexes.size() - 1, -1, -1):
 		var index = expired_indexes[i]
 		print("ORDER FAILED :", readable_single_order_text(orders[index]["stack"]))
 		orders.remove_at(index)
 
-	while orders.size() < MAX_ORDERS:
+	while orders.size() < MAX_ORDERS and available_orders.size() > 0:
 		generate_order()
 
 	update_ui()
-
 
 func generate_order():
 	if orders.size() >= MAX_ORDERS:
 		return
 
+	if available_orders.is_empty():
+		print("No available orders for this level")
+		return
+
 	var new_order = {
-		"stack": ORDER_POOL.pick_random().duplicate(),
+		"stack": available_orders.pick_random().duplicate(),
 		"time_left": ORDER_TIME,
 		"time_max": ORDER_TIME
 	}
 
 	orders.append(new_order)
 	update_ui()
-
 
 func validate(item):
 	for i in range(orders.size()):
@@ -66,20 +72,23 @@ func validate(item):
 
 			orders.remove_at(i)
 
-			while orders.size() < MAX_ORDERS:
+			while orders.size() < MAX_ORDERS and available_orders.size() > 0:
 				generate_order()
 
 			update_ui()
-			return
+			return true
 
 	print("FAIL")
 	update_ui(-1, Color.RED)
 
 	await get_tree().create_timer(0.5).timeout
 	update_ui()
-
+	return false
 
 func update_ui(highlight_index := -2, override_color := Color.WHITE):
+	if order_label == null:
+		return
+
 	var text = ""
 
 	for idx in range(orders.size()):
@@ -104,7 +113,6 @@ func update_ui(highlight_index := -2, override_color := Color.WHITE):
 	order_label.clear()
 	order_label.append_text(text)
 
-
 func get_order_color(order) -> Color:
 	var ratio = order["time_left"] / order["time_max"]
 
@@ -114,7 +122,6 @@ func get_order_color(order) -> Color:
 		return Color.ORANGE
 	else:
 		return Color.RED
-
 
 func readable_single_order_text(order_stack: Array) -> String:
 	var names = ["BUN", "STEAK", "CHEESE", "TOMATO", "SALAD", "ONION"]
