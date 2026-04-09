@@ -11,7 +11,16 @@ func generate_order():
 
 	current_order = orders.pick_random()
 
-	print("ORDER :", current_order)
+	print("ORDER :", readable_order())
+
+func readable_order():
+	var names = ["BUN", "STEAK", "CHEESE", "TOMATO", "SALAD", "ONION"]
+
+	var result = []
+	for i in current_order:
+		result.append(names[i])
+
+	return result
 
 func validate(item):
 	if item.stack == current_order:
