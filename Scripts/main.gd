@@ -87,7 +87,6 @@ func _on_item_clicked(clicked_item):
 		clicked_item.current_slot.remove_item()
 
 	held_item = clicked_item
-	print("PICK :", clicked_item.name)
 
 func _on_item_spawned(item):
 	item.clicked.connect(_on_item_clicked)
