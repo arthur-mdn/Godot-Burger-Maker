@@ -76,8 +76,10 @@ order_manager = NodePath("../OrderManager")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1434321409]
 
-[node name="OrderLabel" type="Label" parent="CanvasLayer" unique_id=1849290514]
-offset_right = 40.0
+[node name="OrderLabel" type="RichTextLabel" parent="CanvasLayer" unique_id=1089954104]
+offset_right = 54.0
 offset_bottom = 23.0
 text = "ORDER"
-horizontal_alignment = 1
+fit_content = true
+scroll_active = false
+autowrap_mode = 0
