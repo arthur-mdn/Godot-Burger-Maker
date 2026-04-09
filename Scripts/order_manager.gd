@@ -28,6 +28,8 @@ func validate(item):
 	else:
 		print("FAIL")
 
+	generate_order()
+
 func _ready():
 	print("OrderManager OK")
 	generate_order()
