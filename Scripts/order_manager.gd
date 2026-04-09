@@ -3,81 +3,14 @@ extends Node
 var orders = []
 @export var order_label: RichTextLabel
 
-func generate_order():
-	var pool = [
-		[0, 1, 0],
-		[0, 1, 2, 0],
-		[0, 1, 3, 0],
-	]
+const ORDER_POOL = [
+	[0, 1, 0],
+	[0, 1, 2, 0],
+	[0, 1, 3, 0],
+]
 
-	var new_order = pool.pick_random()
-	orders.append(new_order)
-
-	update_ui()
-
-func readable_order_text():
-	var names = ["BUN", "STEAK", "CHEESE", "TOMATO", "SALAD", "ONION"]
-
-	var text = ""
-
-	for order in orders:
-		for i in range(order.size()):
-			text += names[order[i]]
-			if i < order.size() - 1:
-				text += " → "
-
-		text += "\n"
-
-	return text
-
-func update_ui(highlight_index := -1, color := Color.WHITE):
-	var names = ["BUN", "STEAK", "CHEESE", "TOMATO", "SALAD", "ONION"]
-
-	var text = ""
-
-	for idx in range(orders.size()):
-		var order = orders[idx]
-
-		var line = ""
-		for i in range(order.size()):
-			line += names[order[i]]
-			if i < order.size() - 1:
-				line += " → "
-
-		# 🎯 appliquer couleur UNIQUEMENT sur la ligne concernée
-		if idx == highlight_index:
-			line = "[color=" + color.to_html() + "]" + line + "[/color]"
-
-		text += line + "\n"
-
-	order_label.clear()
-	order_label.append_text(text)
-
-func validate(item):
-	for i in range(orders.size()):
-		if item.stack == orders[i]:
-			print("SUCCESS")
-
-			# 🟢 highlight uniquement la bonne ligne
-			update_ui(i, Color.GREEN)
-
-			await get_tree().create_timer(0.5).timeout
-
-			orders.remove_at(i)
-
-			generate_order()
-			update_ui()
-			return
-
-	print("FAIL")
-
-	# 🔴 tout rouge (optionnel)
-	order_label.modulate = Color.RED
-
-	await get_tree().create_timer(1).timeout
-
-	order_label.modulate = Color.WHITE
-	update_ui()
+const MAX_ORDERS := 3
+const ORDER_TIME := 40.0
 
 
 func _ready():
@@ -85,3 +18,111 @@ func _ready():
 
 	generate_order()
 	generate_order()
+
+
+func _process(delta):
+	var expired_indexes = []
+
+	for i in range(orders.size()):
+		orders[i]["time_left"] -= delta
+
+		if orders[i]["time_left"] <= 0:
+			expired_indexes.append(i)
+
+	# on supprime à l’envers pour éviter les décalages d’index
+	for i in range(expired_indexes.size() - 1, -1, -1):
+		var index = expired_indexes[i]
+		print("ORDER FAILED :", readable_single_order_text(orders[index]["stack"]))
+		orders.remove_at(index)
+
+	while orders.size() < MAX_ORDERS:
+		generate_order()
+
+	update_ui()
+
+
+func generate_order():
+	if orders.size() >= MAX_ORDERS:
+		return
+
+	var new_order = {
+		"stack": ORDER_POOL.pick_random().duplicate(),
+		"time_left": ORDER_TIME,
+		"time_max": ORDER_TIME
+	}
+
+	orders.append(new_order)
+	update_ui()
+
+
+func validate(item):
+	for i in range(orders.size()):
+		if item.stack == orders[i]["stack"]:
+			print("SUCCESS")
+
+			update_ui(i, Color.GREEN)
+
+			await get_tree().create_timer(0.5).timeout
+
+			orders.remove_at(i)
+
+			while orders.size() < MAX_ORDERS:
+				generate_order()
+
+			update_ui()
+			return
+
+	print("FAIL")
+	update_ui(-1, Color.RED)
+
+	await get_tree().create_timer(0.5).timeout
+	update_ui()
+
+
+func update_ui(highlight_index := -2, override_color := Color.WHITE):
+	var text = ""
+
+	for idx in range(orders.size()):
+		var order = orders[idx]
+		var line = "Commande " + str(idx + 1) + " : "
+		line += readable_single_order_text(order["stack"])
+		line += "   [" + str(int(ceil(order["time_left"]))) + "s]"
+
+		var line_color = get_order_color(order)
+
+		if highlight_index == idx:
+			line_color = override_color
+		elif highlight_index == -1:
+			line_color = override_color
+
+		line = "[color=" + line_color.to_html() + "]" + line + "[/color]"
+
+		text += line
+		if idx < orders.size() - 1:
+			text += "\n"
+
+	order_label.clear()
+	order_label.append_text(text)
+
+
+func get_order_color(order) -> Color:
+	var ratio = order["time_left"] / order["time_max"]
+
+	if ratio > 0.6:
+		return Color.WHITE
+	elif ratio > 0.3:
+		return Color.ORANGE
+	else:
+		return Color.RED
+
+
+func readable_single_order_text(order_stack: Array) -> String:
+	var names = ["BUN", "STEAK", "CHEESE", "TOMATO", "SALAD", "ONION"]
+
+	var text = ""
+	for i in range(order_stack.size()):
+		text += names[order_stack[i]]
+		if i < order_stack.size() - 1:
+			text += " → "
+
+	return text
