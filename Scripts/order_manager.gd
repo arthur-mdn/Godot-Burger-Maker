@@ -61,14 +61,10 @@ func generate_order():
 	orders.append(new_order)
 	update_ui()
 
-func validate(item):
+func validate_stack(served_stack: Array) -> bool:
 	for i in range(orders.size()):
-		if item.stack == orders[i]["stack"]:
+		if served_stack == orders[i]["stack"]:
 			print("SUCCESS")
-
-			update_ui(i, Color.GREEN)
-
-			await get_tree().create_timer(0.5).timeout
 
 			orders.remove_at(i)
 
@@ -79,9 +75,6 @@ func validate(item):
 			return true
 
 	print("FAIL")
-	update_ui(-1, Color.RED)
-
-	await get_tree().create_timer(0.5).timeout
 	update_ui()
 	return false
 

@@ -7,13 +7,14 @@ func place_item(item):
 	if order_manager == null:
 		return false
 
+	var served_stack = item.stack.duplicate()
 	item.queue_free()
 
-	_process_serving(item)
+	_process_serving(served_stack)
 	return true
 
-func _process_serving(item) -> void:
-	var success = await order_manager.validate(item)
+func _process_serving(served_stack) -> void:
+	var success = await order_manager.validate_stack(served_stack)
 
 	if game_manager != null:
 		if success and game_manager.has_method("register_success"):
