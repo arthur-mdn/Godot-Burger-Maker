@@ -1,26 +1,26 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://cw22x0asdhe54"]
 
-[ext_resource type="Script" path="res://Scripts/trash.gd" id="1_trash"]
+[ext_resource type="Script" uid="uid://bpj1y1j5k2pbg" path="res://Scripts/trash.gd" id="1_trash"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_trash"]
-size = Vector3(1.2, 1.0, 1.2)
+size = Vector3(1.2, 1, 1.2)
 
 [sub_resource type="StandardMaterial3D" id="Mat_trash"]
 albedo_color = Color(0.15, 0.15, 0.15, 1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_trash"]
-size = Vector3(1.2, 1.0, 1.2)
+size = Vector3(1.2, 1, 1.2)
 
-[node name="Trash" type="Node3D"]
+[node name="Trash" type="Node3D" unique_id=2122039831]
 script = ExtResource("1_trash")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1866049762]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 mesh = SubResource("BoxMesh_trash")
 surface_material_override/0 = SubResource("Mat_trash")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="."]
+[node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=1083709849]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=1944190302]
 shape = SubResource("BoxShape3D_trash")
