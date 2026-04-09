@@ -1,5 +1,7 @@
 extends Node
 
+signal order_expired
+
 var orders = []
 var available_orders = []
 @export var order_label: RichTextLabel
@@ -38,6 +40,7 @@ func _process(delta):
 		var index = expired_indexes[i]
 		print("ORDER FAILED :", readable_single_order_text(orders[index]["stack"]))
 		orders.remove_at(index)
+		emit_signal("order_expired")
 
 	while orders.size() < MAX_ORDERS and available_orders.size() > 0:
 		generate_order()

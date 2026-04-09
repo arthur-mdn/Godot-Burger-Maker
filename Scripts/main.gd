@@ -2,9 +2,11 @@ extends Node3D
 
 var held_item = null
 var score := 0
+var fail_count := 0
 var success_count := 0
 var level_time_left := 0.0
 var target_success := 0
+var max_failures := 3
 var level_running := false
 
 @onready var level_manager = $LevelManager
@@ -21,12 +23,16 @@ func _ready():
 	for d in dispensers:
 		d.item_spawned.connect(_on_item_spawned)
 
+	order_manager.order_expired.connect(_on_order_expired)
+	
 	start_level()
 
 func start_level():
 	var level_data = level_manager.get_current_level()
 
+	fail_count = 0
 	success_count = 0
+	max_failures = level_data["max_failures"]
 	score = 0
 	level_time_left = level_data["time_limit"]
 	target_success = level_data["target_success"]
@@ -137,8 +143,17 @@ func register_success():
 		end_level(true)
 
 func register_fail():
+	fail_count += 1
 	score -= 5
+
+	print("FAIL COUNT :", fail_count, "/", max_failures)
 	print("SCORE :", score)
+
+	if fail_count >= max_failures:
+		end_level(false)
+
+func _on_order_expired():
+	register_fail()
 
 func end_level(win: bool):
 	if not level_running:

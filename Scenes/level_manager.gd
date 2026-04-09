@@ -4,6 +4,7 @@ var levels = [
 	{
 		"name": "Niveau 1",
 		"time_limit": 120.0,
+		"max_failures": 3,
 		"target_success": 4,
 		"active_stations": [
 			"Dispenser_Bun",
@@ -23,6 +24,7 @@ var levels = [
 	{
 		"name": "Niveau 2",
 		"time_limit": 120.0,
+		"max_failures": 3,
 		"target_success": 5,
 		"active_stations": [
 			"Dispenser_Bun",
