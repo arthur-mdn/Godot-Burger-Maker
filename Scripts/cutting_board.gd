@@ -12,8 +12,8 @@ func place_item(item) -> bool:
 	if current_item != null:
 		return false
 
-	if item.type != item.ItemType.TOMATO and item.type != item.ItemType.ONION:
-		print("PLANCHE : uniquement TOMATE ou OIGNON")
+	if not item.type_needs_chopping(item.type):
+		print("PLANCHE : ingrédient non découpable")
 		return false
 
 	if item.is_chopped:

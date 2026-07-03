@@ -3,6 +3,8 @@ extends Node3D
 enum ItemType { BUN, STEAK, CHEESE, TOMATO, SALAD, ONION }
 enum CookState { NONE, RAW, COOKING, COOKED, BURNT }
 
+const CHOPPABLE_TYPES := [ItemType.TOMATO, ItemType.ONION, ItemType.SALAD]
+
 @export var type: ItemType
 
 signal clicked(item)
@@ -56,11 +58,15 @@ func _on_input_event(_camera, event, _position, _normal, _shape_idx):
 
 # ── Règles de merge ───────────────────────────────────────────────────────────
 
+func type_needs_chopping(t: ItemType) -> bool:
+	return t in CHOPPABLE_TYPES
+
+
 func _is_ready_to_use(item) -> bool:
 	match item.type:
 		ItemType.STEAK:
 			return item.cook_state == CookState.COOKED
-		ItemType.TOMATO, ItemType.ONION:
+		ItemType.TOMATO, ItemType.ONION, ItemType.SALAD:
 			return item.is_chopped
 		_:
 			return true
@@ -137,7 +143,7 @@ func _mesh_height_for(t: int, stack_index: int = -1) -> float:
 		ItemType.STEAK:  return KAYKIT_PATTY_HEIGHT
 		ItemType.CHEESE: return KAYKIT_CHEESE_HEIGHT
 		ItemType.TOMATO: return 0.06 if is_chopped else 0.12
-		ItemType.SALAD:  return 0.15
+		ItemType.SALAD:  return 0.08 if is_chopped else 0.15
 		ItemType.ONION:  return 0.04 if is_chopped else 0.08
 		_: return 0.1
 
@@ -182,14 +188,14 @@ func rebuild_visual():
 			stack_top = _stack_place_model(_create_tomato_visual(in_burger_stack), stack_top)
 			continue
 
+		if t == ItemType.SALAD:
+			var in_burger_stack := stack.size() > 1
+			stack_top = _stack_place_model(_create_salad_visual(in_burger_stack), stack_top)
+			continue
+
 		var mesh = MeshInstance3D.new()
 
 		match t:
-			ItemType.SALAD:
-				mesh.mesh = BoxMesh.new()
-				mesh.scale = Vector3(0.9, mesh_height, 0.9)
-				mesh.material_override = _mat(Color(0.2, 0.8, 0.2))
-
 			ItemType.ONION:
 				mesh.mesh = BoxMesh.new()
 				mesh.scale = Vector3(0.9, mesh_height, 0.9)
@@ -237,6 +243,16 @@ func _create_cheese_visual() -> Node3D:
 	var model: Node3D = CHEESE_SLICE_SCENE.instantiate()
 	model.scale = Vector3.ONE * KAYKIT_CHEESE_SCALE
 	return model
+
+
+func _create_salad_visual(in_burger_stack: bool) -> Node3D:
+	var prepared := is_chopped or in_burger_stack
+	var mesh := MeshInstance3D.new()
+	mesh.mesh = BoxMesh.new()
+	var height := 0.08 if prepared else 0.15
+	mesh.scale = Vector3(0.9 if prepared else 1.0, height, 0.9 if prepared else 1.0)
+	mesh.material_override = _mat(Color(0.35, 0.9, 0.35) if prepared else Color(0.15, 0.65, 0.15))
+	return mesh
 
 
 func _create_tomato_visual(in_burger_stack: bool) -> Node3D:

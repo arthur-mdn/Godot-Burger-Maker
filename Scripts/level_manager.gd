@@ -65,6 +65,7 @@ var levels = [
 			"Dispenser_Cheese",
 			"Dispenser_Salad",
 			"Cooking_1",
+			"Cutting_1",
 			"Slot_1",
 			"Slot_2"
 		],
