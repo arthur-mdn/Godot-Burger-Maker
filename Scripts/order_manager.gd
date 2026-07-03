@@ -8,6 +8,7 @@ const INGREDIENT_NAMES := ["Pain", "Steak", "Fromage", "Tomate", "Salade", "Oign
 
 var orders = []
 var available_orders = []
+var _next_order_number := 1
 @export var orders_container: VBoxContainer
 
 const MAX_ORDERS := 3
@@ -25,6 +26,7 @@ func clear_orders():
 
 func start_orders(initial_count := 2):
 	orders.clear()
+	_next_order_number = 1
 
 	for i in range(initial_count):
 		generate_order()
@@ -43,7 +45,7 @@ func _process(delta):
 
 	for i in range(expired_indexes.size() - 1, -1, -1):
 		var index = expired_indexes[i]
-		print("ORDER FAILED :", readable_single_order_text(orders[index]["stack"]))
+		print("ORDER FAILED : #%d %s" % [orders[index]["order_number"], readable_single_order_text(orders[index]["stack"])])
 		orders.remove_at(index)
 		emit_signal("order_expired")
 		orders_changed = true
@@ -68,11 +70,13 @@ func generate_order():
 		return
 
 	var new_order = {
+		"order_number": _next_order_number,
 		"stack": available_orders.pick_random().duplicate(),
 		"time_left": ORDER_TIME,
 		"time_max": ORDER_TIME
 	}
 
+	_next_order_number += 1
 	orders.append(new_order)
 
 func _refresh_order_times() -> void:
@@ -130,7 +134,7 @@ func update_ui() -> void:
 		var card: PanelContainer = OrderCardScene.instantiate()
 		orders_container.add_child(card)
 		card.setup(
-			idx + 1,
+			order["order_number"],
 			order_ingredients_text(order["stack"]),
 			order["time_left"],
 			get_order_border_color(order)
