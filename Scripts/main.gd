@@ -38,6 +38,9 @@ func _ready():
 
 	order_manager.order_expired.connect(_on_order_expired)
 
+	for station in get_tree().get_nodes_in_group("cooking_station"):
+		station.item_pickup_requested.connect(_on_cooking_station_pickup)
+
 	retry_button.pressed.connect(_on_retry_pressed)
 	next_button.pressed.connect(_on_next_pressed)
 	menu_button.pressed.connect(_on_menu_pressed)
@@ -139,6 +142,12 @@ func _on_item_clicked(clicked_item):
 		clicked_item.current_slot.remove_item()
 
 	held_item = clicked_item
+
+
+func _on_cooking_station_pickup(item) -> void:
+	if held_item != null:
+		return
+	held_item = item
 
 func _on_item_spawned(item):
 	item.clicked.connect(_on_item_clicked)

@@ -23,19 +23,20 @@ const TOMATO_SLICES_SCENE := preload("res://Assets/KayKit/gltf/food_ingredient_t
 const TOMATO_SLICE_SCENE := preload("res://Assets/KayKit/gltf/food_ingredient_tomato_slice.gltf")
 const LETTUCE_WHOLE_SCENE := preload("res://Assets/KayKit/gltf/food_ingredient_lettuce.gltf")
 const LETTUCE_SLICE_SCENE := preload("res://Assets/KayKit/gltf/food_ingredient_lettuce_slice.gltf")
+const ONION_WHOLE_SCENE := preload("res://Assets/KayKit/gltf/food_ingredient_onion.gltf")
+const ONION_RINGS_SCENE := preload("res://Assets/KayKit/gltf/food_ingredient_onion_rings.gltf")
 const KAYKIT_BUN_SCALE := 1.45
-const KAYKIT_BUN_BOTTOM_HEIGHT := 0.29
-const KAYKIT_BUN_TOP_HEIGHT := 0.45
 const KAYKIT_PATTY_SCALE := 1.2
-const KAYKIT_PATTY_HEIGHT := 0.24
 const KAYKIT_CHEESE_SCALE := 1.15
-const KAYKIT_CHEESE_HEIGHT := 0.12
 const KAYKIT_TOMATO_SCALE := 0.95
 const KAYKIT_TOMATO_SLICES_SCALE := 1.0
 const KAYKIT_TOMATO_SLICE_SCALE := 1.1
 const KAYKIT_LETTUCE_SCALE := 0.95
 const KAYKIT_LETTUCE_SLICE_SCALE := 1.1
 const KAYKIT_LETTUCE_STACK_LIFT := 0.05
+const KAYKIT_ONION_SCALE := 0.95
+const KAYKIT_ONION_RINGS_SCALE := 1.0
+const KAYKIT_ONION_STACK_LIFT := 0.05
 
 var current_slot = null
 var stack = []
@@ -139,20 +140,6 @@ func merge(other):
 
 # ── Visual ────────────────────────────────────────────────────────────────────
 
-func _mesh_height_for(t: int, stack_index: int = -1) -> float:
-	match t:
-		ItemType.BUN:
-			if stack_index >= 0 and _bun_count() == 2 and _bun_index_at(stack_index) == 1:
-				return KAYKIT_BUN_TOP_HEIGHT
-			return KAYKIT_BUN_BOTTOM_HEIGHT
-		ItemType.STEAK:  return KAYKIT_PATTY_HEIGHT
-		ItemType.CHEESE: return KAYKIT_CHEESE_HEIGHT
-		ItemType.TOMATO: return 0.06 if is_chopped else 0.12
-		ItemType.SALAD:  return 0.08 if is_chopped else 0.15
-		ItemType.ONION:  return 0.04 if is_chopped else 0.08
-		_: return 0.1
-
-
 func _bun_index_at(stack_index: int) -> int:
 	var count := 0
 	for j in range(stack_index):
@@ -172,7 +159,6 @@ func rebuild_visual():
 
 	for i in range(stack.size()):
 		var t = stack[i]
-		var mesh_height := _mesh_height_for(t, i)
 
 		if t == ItemType.BUN:
 			var is_top_bun := has_top_bun and _bun_index_at(i) == 1
@@ -199,17 +185,11 @@ func rebuild_visual():
 			stack_top = _stack_place_model(_create_salad_visual(in_burger_stack), stack_top, lift)
 			continue
 
-		var mesh = MeshInstance3D.new()
-
-		match t:
-			ItemType.ONION:
-				mesh.mesh = BoxMesh.new()
-				mesh.scale = Vector3(0.9, mesh_height, 0.9)
-				mesh.material_override = _mat(Color(0.95, 0.85, 1.0) if is_chopped else Color(0.8, 0.7, 1.0))
-
-		mesh.position.y = stack_top + mesh_height * 0.5
-		stack_top += mesh_height
-		stack_root.add_child(mesh)
+		if t == ItemType.ONION:
+			var in_burger_stack := stack.size() > 1
+			var lift := KAYKIT_ONION_STACK_LIFT if in_burger_stack else 0.0
+			stack_top = _stack_place_model(_create_onion_visual(in_burger_stack), stack_top, lift)
+			continue
 
 
 func _stack_place_model(model: Node3D, stack_top: float, y_offset: float = 0.0) -> float:
@@ -259,6 +239,17 @@ func _create_salad_visual(in_burger_stack: bool) -> Node3D:
 	else:
 		model = LETTUCE_WHOLE_SCENE.instantiate()
 		model.scale = Vector3.ONE * KAYKIT_LETTUCE_SCALE
+	return model
+
+
+func _create_onion_visual(in_burger_stack: bool) -> Node3D:
+	var model: Node3D
+	if is_chopped or in_burger_stack:
+		model = ONION_RINGS_SCENE.instantiate()
+		model.scale = Vector3.ONE * KAYKIT_ONION_RINGS_SCALE
+	else:
+		model = ONION_WHOLE_SCENE.instantiate()
+		model.scale = Vector3.ONE * KAYKIT_ONION_SCALE
 	return model
 
 
