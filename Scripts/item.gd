@@ -12,9 +12,14 @@ signal clicked(item)
 
 const BUN_BOTTOM_SCENE := preload("res://Assets/KayKit/gltf/food_ingredient_bun_bottom.gltf")
 const BUN_TOP_SCENE := preload("res://Assets/KayKit/gltf/food_ingredient_bun_top.gltf")
+const STEAK_RAW_SCENE := preload("res://Assets/KayKit/gltf/food_ingredient_burger_uncooked.gltf")
+const STEAK_COOKED_SCENE := preload("res://Assets/KayKit/gltf/food_ingredient_burger_cooked.gltf")
+const STEAK_BURNT_SCENE := preload("res://Assets/KayKit/gltf/food_ingredient_burger_trash.gltf")
 const KAYKIT_BUN_SCALE := 1.45
 const KAYKIT_BUN_BOTTOM_HEIGHT := 0.29
 const KAYKIT_BUN_TOP_HEIGHT := 0.45
+const KAYKIT_PATTY_SCALE := 1.2
+const KAYKIT_PATTY_HEIGHT := 0.24
 
 var current_slot = null
 var stack = []
@@ -120,7 +125,7 @@ func _mesh_height_for(t: int, stack_index: int = -1) -> float:
 			if stack_index >= 0 and _bun_count() == 2 and _bun_index_at(stack_index) == 1:
 				return KAYKIT_BUN_TOP_HEIGHT
 			return KAYKIT_BUN_BOTTOM_HEIGHT
-		ItemType.STEAK:  return 0.2
+		ItemType.STEAK:  return KAYKIT_PATTY_HEIGHT
 		ItemType.CHEESE: return 0.1
 		ItemType.TOMATO: return 0.06 if is_chopped else 0.12
 		ItemType.SALAD:  return 0.15
@@ -157,20 +162,17 @@ func rebuild_visual():
 			stack_root.add_child(model)
 			continue
 
+		if t == ItemType.STEAK:
+			var steak_state: CookState = visual_cook_state if type == ItemType.STEAK else steak_visual_state
+			var steak_model := _create_steak_visual(steak_state)
+			steak_model.position.y = height + mesh_height * 0.5
+			height += mesh_height
+			stack_root.add_child(steak_model)
+			continue
+
 		var mesh = MeshInstance3D.new()
 
 		match t:
-			ItemType.STEAK:
-				mesh.mesh = BoxMesh.new()
-				mesh.scale = Vector3(0.9, mesh_height, 0.9)
-				var s = visual_cook_state if type == ItemType.STEAK else steak_visual_state
-				match s:
-					CookState.RAW:     mesh.material_override = _mat(Color(1.0, 0.3, 0.3))
-					CookState.COOKING: mesh.material_override = _mat(Color(0.9, 0.25, 0.05))
-					CookState.COOKED:  mesh.material_override = _mat(Color(0.4, 0.2, 0.1))
-					CookState.BURNT:   mesh.material_override = _mat(Color(0.1, 0.1, 0.1))
-					_:                 mesh.material_override = _mat(Color(0.4, 0.2, 0.1))
-
 			ItemType.CHEESE:
 				mesh.mesh = BoxMesh.new()
 				mesh.scale = Vector3(0.9, mesh_height, 0.9)
@@ -202,6 +204,42 @@ func _create_bun_visual(is_top: bool) -> Node3D:
 	if is_top:
 		_set_model_transparent(model, 0.4)
 	return model
+
+
+func _create_steak_visual(state: CookState) -> Node3D:
+	var scene: PackedScene
+
+	match state:
+		CookState.RAW, CookState.COOKING:
+			scene = STEAK_RAW_SCENE
+		CookState.COOKED:
+			scene = STEAK_COOKED_SCENE
+		CookState.BURNT:
+			scene = STEAK_BURNT_SCENE
+		_:
+			scene = STEAK_RAW_SCENE
+
+	var model: Node3D = scene.instantiate()
+	model.scale = Vector3.ONE * KAYKIT_PATTY_SCALE
+
+	if state == CookState.COOKING:
+		_set_model_modulate(model, Color(1.0, 0.88, 0.72))
+
+	return model
+
+
+func _set_model_modulate(root: Node3D, tint: Color) -> void:
+	for mesh_instance in root.find_children("*", "MeshInstance3D", true, false):
+		if mesh_instance.mesh == null:
+			continue
+		for surface_idx in range(mesh_instance.mesh.get_surface_count()):
+			var mat = mesh_instance.get_active_material(surface_idx)
+			if mat == null:
+				continue
+			var dup = mat.duplicate()
+			if dup is StandardMaterial3D:
+				dup.albedo_color *= tint
+			mesh_instance.set_surface_override_material(surface_idx, dup)
 
 
 func _set_model_transparent(root: Node3D, alpha: float) -> void:
