@@ -1,27 +1,21 @@
 [gd_scene format=3 uid="uid://dyiu5aj8yyv8d"]
 
 [ext_resource type="Script" uid="uid://bsu16g3mh6h1e" path="res://Scripts/serving_station.gd" id="1_wt0rs"]
+[ext_resource type="PackedScene" uid="uid://ch0mdi5g8ghim" path="res://Assets/KayKit/gltf/wall_orderwindow_decorated.gltf" id="2_window"]
 
-[sub_resource type="BoxMesh" id="BoxMesh_trash"]
-size = Vector3(1.4, 0.08, 1.4)
+[sub_resource type="BoxShape3D" id="BoxShape3D_serve"]
+size = Vector3(4.2436523, 3.9262938, 1.446875)
 
-[sub_resource type="StandardMaterial3D" id="Mat_trash"]
-albedo_color = Color(0.14901961, 0.5372549, 0.14901961, 1)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_trash"]
-size = Vector3(1.4, 0.08, 1.4)
-
-[node name="ServingStation" type="Node3D" unique_id=1885268490]
+[node name="ServingStation" type="Node3D" unique_id=618631421]
 script = ExtResource("1_wt0rs")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1220176749]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.01, 0)
-mesh = SubResource("BoxMesh_trash")
-surface_material_override/0 = SubResource("Mat_trash")
+[node name="Visual" type="Node3D" parent="." unique_id=849832418]
 
-[node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=1631980723]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.04, 0)
+[node name="OrderWindow" parent="Visual" unique_id=1152379838 instance=ExtResource("2_window")]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=683924006]
-shape = SubResource("BoxShape3D_trash")
-debug_color = Color(0, 0.6, 0, 0.41960785)
+[node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=1085023148]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.05, 0.35)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=1159754165]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.1262207, 0.9119749, -0.3234375)
+shape = SubResource("BoxShape3D_serve")
