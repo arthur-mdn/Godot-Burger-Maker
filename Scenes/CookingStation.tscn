@@ -1,9 +1,14 @@
 [gd_scene format=3 uid="uid://bwgai41orblj"]
 
 [ext_resource type="Script" uid="uid://cwi70u8pt4ybt" path="res://Scripts/cooking_station.gd" id="1_e3c22"]
+[ext_resource type="PackedScene" uid="uid://cmvc7kq4xhkde" path="res://Assets/KayKit/gltf/stove_single_countertop.gltf" id="2_cooktop"]
+[ext_resource type="PackedScene" uid="uid://d01kwv5ifg5cd" path="res://Assets/KayKit/gltf/pan_A.gltf" id="3_pan"]
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_2vt2k"]
-size = Vector3(1.54, 0.27, 1.54)
+[sub_resource type="BoxShape3D" id="BoxShape3D_drop"]
+size = Vector3(1.66, 0.35, 1.66)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_pickup"]
+size = Vector3(1.66, 0.35, 1.66)
 
 [sub_resource type="BoxMesh" id="BoxMesh_yt4nv"]
 size = Vector3(1.2, 0.05, 0.2)
@@ -14,22 +19,34 @@ albedo_color = Color(0.15, 0.15, 0.15, 1)
 [sub_resource type="BoxMesh" id="BoxMesh_2vt2k"]
 size = Vector3(1.2, 0.06, 0.16)
 
-[node name="CookingStation" type="Node3D" unique_id=342943021]
+[node name="CookingStation" type="Node3D"]
 script = ExtResource("1_e3c22")
 
-[node name="Visual" type="Node3D" parent="." unique_id=2053647070]
+[node name="Visual" type="Node3D" parent="."]
 
-[node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=769331985]
+[node name="Cooktop" parent="Visual" instance=ExtResource("2_cooktop")]
+transform = Transform3D(1, 0, 0, 0, 0.95, 0, 0, 0, 1, 0, -0.8835, 0)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=1530679936]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.205, -0.303, -0.012)
-shape = SubResource("BoxShape3D_2vt2k")
+[node name="Pan" parent="Visual" instance=ExtResource("3_pan")]
+transform = Transform3D(1.15, 0, 0, 0, 1.15, 0, 0, 0, 1.15, 0, 0.278, 0)
 
-[node name="ProgressBg" type="MeshInstance3D" parent="." unique_id=1249988879]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.62)
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.17, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+shape = SubResource("BoxShape3D_drop")
+
+[node name="PickupArea" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.17, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PickupArea"]
+shape = SubResource("BoxShape3D_pickup")
+
+[node name="ProgressBg" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.76, 0.62)
 mesh = SubResource("BoxMesh_yt4nv")
 surface_material_override/0 = SubResource("StandardMaterial3D_js4rr")
 
-[node name="ProgressMesh" type="MeshInstance3D" parent="." unique_id=908838274]
-transform = Transform3D(0.01, 0, 0, 0, 1, 0, 0, 0, 1, -0.595, 0, 0.62)
+[node name="ProgressMesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.01, 0, 0, 0, 1, 0, 0, 0, 1, -0.595, 0.77, 0.62)
 mesh = SubResource("BoxMesh_2vt2k")

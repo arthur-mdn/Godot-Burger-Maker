@@ -175,15 +175,15 @@ func try_drop():
 		if target.has_method("place_item"):
 			var placed = target.place_item(held_item)
 
-			# serving station peut renvoyer true / false
 			if placed == true:
 				held_item = null
 				return
 
-			# si la station ne renvoie rien, on considère que ça a marché
 			if placed == null:
 				held_item = null
 				return
+
+			return
 
 	held_item = null
 

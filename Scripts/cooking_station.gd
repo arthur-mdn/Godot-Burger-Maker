@@ -1,20 +1,13 @@
 extends Node3D
 
-const KAYKIT_COOKTOP_SCENE := preload("res://Assets/KayKit/gltf/stove_single_countertop.gltf")
-const KAYKIT_PAN_SCENE := preload("res://Assets/KayKit/gltf/pan_A.gltf")
-const KAYKIT_COOKTOP_SCALE := 1.0
-const KAYKIT_COOKTOP_Y_SCALE := 0.95
-const KAYKIT_PAN_SCALE := 1.15
-const COOKTOP_Y_OFFSET := 0.0
 const COOK_SURFACE_PADDING := 0.02
 const PAN_STEAK_SURFACE_INSET := 0.06
 const PROGRESS_BAR_HEIGHT := 0.42
 
 signal item_pickup_requested(item)
 
-@onready var visual_root: Node3D = $Visual
-@onready var static_body: StaticBody3D = $StaticBody3D
-@onready var collision_shape: CollisionShape3D = $StaticBody3D/CollisionShape3D
+@onready var pan: Node3D = $Visual/Pan
+@onready var pickup_area: Area3D = $PickupArea
 @onready var progress_bg = $ProgressBg
 @onready var progress_mesh = $ProgressMesh
 
@@ -28,96 +21,28 @@ var _phase        := ""
 var _timer        := 0.0
 var _phase_duration := 0.0
 var _item_drop_offset := Vector3.ZERO
-var _pickup_area: Area3D
-var _pickup_collision: CollisionShape3D
 
 func _ready():
 	add_to_group("cooking_station")
 	progress_bg.visible   = false
 	progress_mesh.visible = false
-	call_deferred("_setup_visual")
+	pickup_area.input_event.connect(_on_pickup_area_input)
+	call_deferred("_update_drop_points")
 
-func _setup_visual() -> void:
-	for child in visual_root.get_children():
-		child.queue_free()
-
-	var cooktop: Node3D = KAYKIT_COOKTOP_SCENE.instantiate()
-	visual_root.add_child(cooktop)
-	cooktop.scale = Vector3(
-		KAYKIT_COOKTOP_SCALE,
-		KAYKIT_COOKTOP_SCALE * KAYKIT_COOKTOP_Y_SCALE,
-		KAYKIT_COOKTOP_SCALE
-	)
-	_align_model_bottom_to_y(cooktop, COOKTOP_Y_OFFSET)
-	var cooktop_top := _model_top_y(cooktop)
-
-	var pan: Node3D = KAYKIT_PAN_SCENE.instantiate()
-	visual_root.add_child(pan)
-	pan.scale = Vector3.ONE * KAYKIT_PAN_SCALE
-	_align_model_bottom_to_y(pan, cooktop_top)
-
+func _update_drop_points() -> void:
+	if not is_instance_valid(pan):
+		return
 	var pan_surface_y := _pan_cook_surface_y(pan)
 	_item_drop_offset = Vector3(0, pan_surface_y + COOK_SURFACE_PADDING, 0)
-
-	_configure_interaction_zone(cooktop, cooktop_top, pan_surface_y)
-
 	var progress_y := pan_surface_y + PROGRESS_BAR_HEIGHT
 	progress_bg.position.y = progress_y
 	progress_mesh.position.y = progress_y + 0.01
 
-func _configure_interaction_zone(cooktop: Node3D, cooktop_top: float, pan_surface_y: float) -> void:
-	var cooktop_aabb := _combined_mesh_aabb(cooktop)
-	var zone_size := Vector3(
-		cooktop_aabb.size.x,
-		pan_surface_y - cooktop_top + 0.2,
-		cooktop_aabb.size.z
-	)
-	var zone_center_y := cooktop_top + zone_size.y * 0.5 - 0.05
-
-	var shape := collision_shape.shape as BoxShape3D
-	shape.size = zone_size
-	static_body.position.y = zone_center_y
-
-	if _pickup_area == null:
-		_pickup_area = Area3D.new()
-		_pickup_area.name = "PickupArea"
-		add_child(_pickup_area)
-		_pickup_collision = CollisionShape3D.new()
-		_pickup_collision.shape = BoxShape3D.new()
-		_pickup_area.add_child(_pickup_collision)
-		_pickup_area.input_event.connect(_on_pickup_area_input)
-
-	(_pickup_collision.shape as BoxShape3D).size = zone_size
-	_pickup_area.position.y = zone_center_y
-
-func _on_pickup_area_input(_camera, event, _position, _normal, _shape_idx) -> void:
-	if not (event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT):
-		return
-	if current_item == null:
-		return
-	var item = remove_item()
-	if item:
-		item.current_slot = null
-		emit_signal("item_pickup_requested", item)
-
-func _align_model_bottom_to_y(model: Node3D, surface_y: float) -> void:
-	var aabb := _combined_mesh_aabb(model)
+func _pan_cook_surface_y(pan_node: Node3D) -> float:
+	var aabb := _combined_mesh_aabb(pan_node)
 	if aabb.size.length_squared() < 0.000001:
-		model.position.y = surface_y
-		return
-	model.position.y = surface_y - aabb.position.y
-
-func _pan_cook_surface_y(pan: Node3D) -> float:
-	var aabb := _combined_mesh_aabb(pan)
-	if aabb.size.length_squared() < 0.000001:
-		return pan.position.y + PAN_STEAK_SURFACE_INSET
-	return pan.position.y + aabb.position.y + PAN_STEAK_SURFACE_INSET
-
-func _model_top_y(model: Node3D) -> float:
-	var aabb := _combined_mesh_aabb(model)
-	if aabb.size.length_squared() < 0.000001:
-		return 0.28
-	return model.position.y + aabb.position.y + aabb.size.y
+		return pan_node.position.y + PAN_STEAK_SURFACE_INSET
+	return pan_node.position.y + aabb.position.y + PAN_STEAK_SURFACE_INSET
 
 func _combined_mesh_aabb(root: Node3D) -> AABB:
 	var result := AABB()
@@ -132,6 +57,16 @@ func _combined_mesh_aabb(root: Node3D) -> AABB:
 		else:
 			result = result.merge(local_aabb)
 	return result
+
+func _on_pickup_area_input(_camera, event, _position, _normal, _shape_idx) -> void:
+	if not (event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT):
+		return
+	if current_item == null:
+		return
+	var item = remove_item()
+	if item:
+		item.current_slot = null
+		emit_signal("item_pickup_requested", item)
 
 func _process(delta: float):
 	if _phase == "" or not is_instance_valid(current_item):

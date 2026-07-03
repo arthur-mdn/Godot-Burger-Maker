@@ -1,3 +1,4 @@
+@tool
 extends Node3D
 
 enum ItemType { BUN, STEAK, CHEESE, TOMATO, SALAD, ONION }
@@ -5,7 +6,10 @@ enum CookState { NONE, RAW, COOKING, COOKED, BURNT }
 
 const CHOPPABLE_TYPES := [ItemType.TOMATO, ItemType.ONION, ItemType.SALAD]
 
-@export var type: ItemType
+@export var type: ItemType = ItemType.BUN:
+	set(value):
+		type = value
+		_refresh_editor_visual()
 
 signal clicked(item)
 
@@ -43,20 +47,44 @@ var stack = []
 var cook_state = CookState.NONE
 var visual_cook_state = CookState.NONE
 var cooking_id = 0
-var is_chopped: bool = false
+@export var is_chopped: bool = false:
+	set(value):
+		is_chopped = value
+		_refresh_editor_visual()
 var steak_visual_state = CookState.COOKED
 
 func _ready():
+	if Engine.is_editor_hint():
+		_init_stack_for_visual()
+		rebuild_visual()
+		return
+
 	add_to_group("item")
 	area.input_event.connect(_on_input_event)
-	stack.append(type)
+	_init_stack_for_visual()
 	if type == ItemType.STEAK:
 		cook_state = CookState.RAW
 		visual_cook_state = CookState.RAW
 		steak_visual_state = CookState.RAW
 	rebuild_visual()
 
+func _init_stack_for_visual() -> void:
+	if stack.is_empty():
+		stack.append(type)
+	else:
+		stack[0] = type
+
+func _refresh_editor_visual() -> void:
+	if not Engine.is_editor_hint() or not is_inside_tree():
+		return
+	if stack_root == null:
+		return
+	_init_stack_for_visual()
+	rebuild_visual()
+
 func _on_input_event(_camera, event, _position, _normal, _shape_idx):
+	if Engine.is_editor_hint():
+		return
 	if event is InputEventMouseButton \
 	and event.pressed \
 	and event.button_index == MOUSE_BUTTON_LEFT:
