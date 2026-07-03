@@ -8,14 +8,12 @@ Jeu de cuisine solo en 3D, inspiré d'*Overcooked*. Tu gères seul une cuisine s
 
 Des clients attendent leur burger à la fenêtre de service. À toi de préparer les ingrédients, assembler les recettes et livrer avant que le temps ne s'écoule. Trop d'erreurs, et c'est la défaite. Assez de réussites, et tu débloques le niveau suivant.
 
-Simple à prendre en main, exigeant à maîtriser.
-
 ## Ce qui t'attend
 
 - **10 niveaux progressifs**, du burger steak simple au chef d'œuvre garni
 - **Commandes en temps réel** avec timer par ticket et urgence visuelle
 - **Chaîne de production complète** : distributeurs, plaques de cuisson, planches à découper, slots d'assemblage
-- **Empilement d'ingrédients** en glisser-déposer, avec garnitures dans l'ordre que tu veux (pain haut et bas obligatoires)
+- **Empilement d'ingrédients** en clic maintenu / relâchement, avec garnitures dans l'ordre que tu veux (pain haut et bas obligatoires)
 - **Cuisson à surveiller** : cru, cuit ou cramé, à toi de juger
 - **Découpe obligatoire** pour tomate, salade et oignon
 - **Feedback immédiat** à la fenêtre de service : validation, erreur, flash lumineux
@@ -26,12 +24,14 @@ Simple à prendre en main, exigeant à maîtriser.
 ## Comment jouer
 
 
-| Action                          | Contrôle                                            |
-| ------------------------------- | --------------------------------------------------- |
-| Prendre / déposer un ingrédient | Clic gauche                                         |
-| Assembler un burger             | Empiler sur un slot bleu avec un autre ingrédient   |
-| Servir une commande             | Déposer le burger complet sur la fenêtre de service |
-| Se débarrasser d'un raté        | Poubelle                                            |
+| Action | Contrôle |
+| ------ | -------- |
+| Prendre un ingrédient | Clic gauche maintenu sur l'objet |
+| Déplacer | Maintenir le clic, l'ingrédient suit le curseur |
+| Poser / déposer | Relâcher le clic à l'emplacement voulu |
+| Assembler un burger | Empiler sur un slot bleu avec un autre ingrédient |
+| Servir une commande | Déposer le burger complet sur la fenêtre de service |
+| Se débarrasser d'un raté | Poubelle |
 
 
 L'objectif de chaque niveau : livrer assez de commandes valides avant la fin du temps imparti, sans dépasser la limite d'erreurs.
