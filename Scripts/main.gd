@@ -89,7 +89,7 @@ func update_level_ui():
 		score_label.text = str(score)
 
 	if timer_label:
-		timer_label.text = str(int(ceil(level_time_left))) + "s"
+		timer_label.text = _format_time(level_time_left)
 
 	if success_label:
 		success_label.text = str(success_count) + " / " + str(target_success)
@@ -99,6 +99,13 @@ func update_level_ui():
 
 	if fail_label:
 		fail_label.text = str(fail_count) + " / " + str(max_failures)
+
+func _format_time(seconds: float) -> String:
+	var total := int(ceil(maxf(seconds, 0.0)))
+	var minutes := total / 60
+	var secs := total % 60
+	return "%02d:%02d" % [minutes, secs]
+
 
 func _input(event):
 	if event is InputEventMouseButton and not event.pressed:
