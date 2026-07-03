@@ -15,11 +15,14 @@ const BUN_TOP_SCENE := preload("res://Assets/KayKit/gltf/food_ingredient_bun_top
 const STEAK_RAW_SCENE := preload("res://Assets/KayKit/gltf/food_ingredient_burger_uncooked.gltf")
 const STEAK_COOKED_SCENE := preload("res://Assets/KayKit/gltf/food_ingredient_burger_cooked.gltf")
 const STEAK_BURNT_SCENE := preload("res://Assets/KayKit/gltf/food_ingredient_burger_trash.gltf")
+const CHEESE_SLICE_SCENE := preload("res://Assets/KayKit/gltf/food_ingredient_cheese_slice.gltf")
 const KAYKIT_BUN_SCALE := 1.45
 const KAYKIT_BUN_BOTTOM_HEIGHT := 0.29
 const KAYKIT_BUN_TOP_HEIGHT := 0.45
 const KAYKIT_PATTY_SCALE := 1.2
 const KAYKIT_PATTY_HEIGHT := 0.24
+const KAYKIT_CHEESE_SCALE := 1.15
+const KAYKIT_CHEESE_HEIGHT := 0.12
 
 var current_slot = null
 var stack = []
@@ -126,7 +129,7 @@ func _mesh_height_for(t: int, stack_index: int = -1) -> float:
 				return KAYKIT_BUN_TOP_HEIGHT
 			return KAYKIT_BUN_BOTTOM_HEIGHT
 		ItemType.STEAK:  return KAYKIT_PATTY_HEIGHT
-		ItemType.CHEESE: return 0.1
+		ItemType.CHEESE: return KAYKIT_CHEESE_HEIGHT
 		ItemType.TOMATO: return 0.06 if is_chopped else 0.12
 		ItemType.SALAD:  return 0.15
 		ItemType.ONION:  return 0.04 if is_chopped else 0.08
@@ -147,7 +150,7 @@ func rebuild_visual():
 
 	stack_root.position = Vector3.ZERO
 
-	var height := 0.0
+	var stack_top := 0.0
 	var has_top_bun := (_bun_count() == 2)
 
 	for i in range(stack.size()):
@@ -156,28 +159,21 @@ func rebuild_visual():
 
 		if t == ItemType.BUN:
 			var is_top_bun := has_top_bun and _bun_index_at(i) == 1
-			var model := _create_bun_visual(is_top_bun)
-			model.position.y = height + mesh_height * 0.5
-			height += mesh_height
-			stack_root.add_child(model)
+			stack_top = _stack_place_model(_create_bun_visual(is_top_bun), stack_top)
 			continue
 
 		if t == ItemType.STEAK:
 			var steak_state: CookState = visual_cook_state if type == ItemType.STEAK else steak_visual_state
-			var steak_model := _create_steak_visual(steak_state)
-			steak_model.position.y = height + mesh_height * 0.5
-			height += mesh_height
-			stack_root.add_child(steak_model)
+			stack_top = _stack_place_model(_create_steak_visual(steak_state), stack_top)
+			continue
+
+		if t == ItemType.CHEESE:
+			stack_top = _stack_place_model(_create_cheese_visual(), stack_top)
 			continue
 
 		var mesh = MeshInstance3D.new()
 
 		match t:
-			ItemType.CHEESE:
-				mesh.mesh = BoxMesh.new()
-				mesh.scale = Vector3(0.9, mesh_height, 0.9)
-				mesh.material_override = _mat(Color(1.0, 0.8, 0.2))
-
 			ItemType.TOMATO:
 				mesh.mesh = BoxMesh.new()
 				mesh.scale = Vector3(0.9, mesh_height, 0.9)
@@ -193,9 +189,34 @@ func rebuild_visual():
 				mesh.scale = Vector3(0.9, mesh_height, 0.9)
 				mesh.material_override = _mat(Color(0.95, 0.85, 1.0) if is_chopped else Color(0.8, 0.7, 1.0))
 
-		mesh.position.y = height + mesh_height * 0.5
-		height += mesh_height
+		mesh.position.y = stack_top + mesh_height * 0.5
+		stack_top += mesh_height
 		stack_root.add_child(mesh)
+
+
+func _stack_place_model(model: Node3D, stack_top: float) -> float:
+	stack_root.add_child(model)
+	var aabb := _combined_mesh_aabb(model)
+	if aabb.size.length_squared() < 0.000001:
+		model.position.y = stack_top
+		return stack_top + 0.1
+	model.position.y = stack_top - aabb.position.y
+	return stack_top + aabb.size.y
+
+
+func _combined_mesh_aabb(root: Node3D) -> AABB:
+	var result := AABB()
+	var has_aabb := false
+	for mesh_instance in root.find_children("*", "MeshInstance3D", true, false):
+		if mesh_instance.mesh == null:
+			continue
+		var local_aabb: AABB = mesh_instance.transform * mesh_instance.mesh.get_aabb()
+		if not has_aabb:
+			result = local_aabb
+			has_aabb = true
+		else:
+			result = result.merge(local_aabb)
+	return result
 
 
 func _create_bun_visual(is_top: bool) -> Node3D:
@@ -203,6 +224,12 @@ func _create_bun_visual(is_top: bool) -> Node3D:
 	model.scale = Vector3.ONE * KAYKIT_BUN_SCALE
 	if is_top:
 		_set_model_transparent(model, 0.4)
+	return model
+
+
+func _create_cheese_visual() -> Node3D:
+	var model: Node3D = CHEESE_SLICE_SCENE.instantiate()
+	model.scale = Vector3.ONE * KAYKIT_CHEESE_SCALE
 	return model
 
 
