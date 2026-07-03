@@ -10,6 +10,12 @@ signal clicked(item)
 @onready var stack_root = $Visual/StackRoot
 @onready var area = $Area3D
 
+const BUN_BOTTOM_SCENE := preload("res://Assets/KayKit/gltf/food_ingredient_bun_bottom.gltf")
+const BUN_TOP_SCENE := preload("res://Assets/KayKit/gltf/food_ingredient_bun_top.gltf")
+const KAYKIT_BUN_SCALE := 1.45
+const KAYKIT_BUN_BOTTOM_HEIGHT := 0.29
+const KAYKIT_BUN_TOP_HEIGHT := 0.45
+
 var current_slot = null
 var stack = []
 var cook_state = CookState.NONE
@@ -108,9 +114,12 @@ func merge(other):
 
 # ── Visual ────────────────────────────────────────────────────────────────────
 
-func _mesh_height_for(t: int) -> float:
+func _mesh_height_for(t: int, stack_index: int = -1) -> float:
 	match t:
-		ItemType.BUN:    return 0.3
+		ItemType.BUN:
+			if stack_index >= 0 and _bun_count() == 2 and _bun_index_at(stack_index) == 1:
+				return KAYKIT_BUN_TOP_HEIGHT
+			return KAYKIT_BUN_BOTTOM_HEIGHT
 		ItemType.STEAK:  return 0.2
 		ItemType.CHEESE: return 0.1
 		ItemType.TOMATO: return 0.06 if is_chopped else 0.12
@@ -118,30 +127,39 @@ func _mesh_height_for(t: int) -> float:
 		ItemType.ONION:  return 0.04 if is_chopped else 0.08
 		_: return 0.1
 
+
+func _bun_index_at(stack_index: int) -> int:
+	var count := 0
+	for j in range(stack_index):
+		if stack[j] == ItemType.BUN:
+			count += 1
+	return count
+
+
 func rebuild_visual():
 	for child in stack_root.get_children():
 		child.free()
 
 	stack_root.position = Vector3.ZERO
 
-	var height = 0.0
-	# Pain du haut semi-transparent uniquement quand les 2 pains sont posés
-	var has_top_bun = (_bun_count() == 2)
+	var height := 0.0
+	var has_top_bun := (_bun_count() == 2)
 
 	for i in range(stack.size()):
 		var t = stack[i]
+		var mesh_height := _mesh_height_for(t, i)
+
+		if t == ItemType.BUN:
+			var is_top_bun := has_top_bun and _bun_index_at(i) == 1
+			var model := _create_bun_visual(is_top_bun)
+			model.position.y = height + mesh_height * 0.5
+			height += mesh_height
+			stack_root.add_child(model)
+			continue
+
 		var mesh = MeshInstance3D.new()
-		var mesh_height = _mesh_height_for(t)
 
 		match t:
-			ItemType.BUN:
-				mesh.mesh = BoxMesh.new()
-				mesh.scale = Vector3(1, mesh_height, 1)
-				var is_top_bun = has_top_bun and (i == stack.size() - 1)
-				var alpha = 0.4 if is_top_bun else 1.0
-				var color = Color(0.8, 0.6, 0.3, alpha)
-				mesh.material_override = _mat(color, is_top_bun)
-
 			ItemType.STEAK:
 				mesh.mesh = BoxMesh.new()
 				mesh.scale = Vector3(0.9, mesh_height, 0.9)
@@ -176,6 +194,31 @@ func rebuild_visual():
 		mesh.position.y = height + mesh_height * 0.5
 		height += mesh_height
 		stack_root.add_child(mesh)
+
+
+func _create_bun_visual(is_top: bool) -> Node3D:
+	var model: Node3D = (BUN_TOP_SCENE if is_top else BUN_BOTTOM_SCENE).instantiate()
+	model.scale = Vector3.ONE * KAYKIT_BUN_SCALE
+	if is_top:
+		_set_model_transparent(model, 0.4)
+	return model
+
+
+func _set_model_transparent(root: Node3D, alpha: float) -> void:
+	for mesh_instance in root.find_children("*", "MeshInstance3D", true, false):
+		if mesh_instance.mesh == null:
+			continue
+		for surface_idx in range(mesh_instance.mesh.get_surface_count()):
+			var mat = mesh_instance.get_active_material(surface_idx)
+			if mat == null:
+				continue
+			var dup = mat.duplicate()
+			if dup is StandardMaterial3D:
+				dup.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+				dup.albedo_color.a = alpha
+				dup.depth_draw_mode = BaseMaterial3D.DEPTH_DRAW_DISABLED
+				dup.render_priority = 1
+			mesh_instance.set_surface_override_material(surface_idx, dup)
 
 func _mat(color: Color, transparent: bool = false) -> StandardMaterial3D:
 	var mat = StandardMaterial3D.new()
