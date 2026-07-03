@@ -16,6 +16,9 @@ const STEAK_RAW_SCENE := preload("res://Assets/KayKit/gltf/food_ingredient_burge
 const STEAK_COOKED_SCENE := preload("res://Assets/KayKit/gltf/food_ingredient_burger_cooked.gltf")
 const STEAK_BURNT_SCENE := preload("res://Assets/KayKit/gltf/food_ingredient_burger_trash.gltf")
 const CHEESE_SLICE_SCENE := preload("res://Assets/KayKit/gltf/food_ingredient_cheese_slice.gltf")
+const TOMATO_WHOLE_SCENE := preload("res://Assets/KayKit/gltf/food_ingredient_tomato.gltf")
+const TOMATO_SLICES_SCENE := preload("res://Assets/KayKit/gltf/food_ingredient_tomato_slices.gltf")
+const TOMATO_SLICE_SCENE := preload("res://Assets/KayKit/gltf/food_ingredient_tomato_slice.gltf")
 const KAYKIT_BUN_SCALE := 1.45
 const KAYKIT_BUN_BOTTOM_HEIGHT := 0.29
 const KAYKIT_BUN_TOP_HEIGHT := 0.45
@@ -23,6 +26,9 @@ const KAYKIT_PATTY_SCALE := 1.2
 const KAYKIT_PATTY_HEIGHT := 0.24
 const KAYKIT_CHEESE_SCALE := 1.15
 const KAYKIT_CHEESE_HEIGHT := 0.12
+const KAYKIT_TOMATO_SCALE := 0.95
+const KAYKIT_TOMATO_SLICES_SCALE := 1.0
+const KAYKIT_TOMATO_SLICE_SCALE := 1.1
 
 var current_slot = null
 var stack = []
@@ -171,14 +177,14 @@ func rebuild_visual():
 			stack_top = _stack_place_model(_create_cheese_visual(), stack_top)
 			continue
 
+		if t == ItemType.TOMATO:
+			var in_burger_stack := stack.size() > 1
+			stack_top = _stack_place_model(_create_tomato_visual(in_burger_stack), stack_top)
+			continue
+
 		var mesh = MeshInstance3D.new()
 
 		match t:
-			ItemType.TOMATO:
-				mesh.mesh = BoxMesh.new()
-				mesh.scale = Vector3(0.9, mesh_height, 0.9)
-				mesh.material_override = _mat(Color(1.0, 0.1, 0.1) if is_chopped else Color(1.0, 0.2, 0.2))
-
 			ItemType.SALAD:
 				mesh.mesh = BoxMesh.new()
 				mesh.scale = Vector3(0.9, mesh_height, 0.9)
@@ -230,6 +236,20 @@ func _create_bun_visual(is_top: bool) -> Node3D:
 func _create_cheese_visual() -> Node3D:
 	var model: Node3D = CHEESE_SLICE_SCENE.instantiate()
 	model.scale = Vector3.ONE * KAYKIT_CHEESE_SCALE
+	return model
+
+
+func _create_tomato_visual(in_burger_stack: bool) -> Node3D:
+	var model: Node3D
+	if in_burger_stack:
+		model = TOMATO_SLICE_SCENE.instantiate()
+		model.scale = Vector3.ONE * KAYKIT_TOMATO_SLICE_SCALE
+	elif is_chopped:
+		model = TOMATO_SLICES_SCENE.instantiate()
+		model.scale = Vector3.ONE * KAYKIT_TOMATO_SLICES_SCALE
+	else:
+		model = TOMATO_WHOLE_SCENE.instantiate()
+		model.scale = Vector3.ONE * KAYKIT_TOMATO_SCALE
 	return model
 
 

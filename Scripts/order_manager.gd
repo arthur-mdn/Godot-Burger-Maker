@@ -64,9 +64,24 @@ func generate_order():
 	orders.append(new_order)
 	update_ui()
 
+func normalize_stack(stack: Array) -> Array:
+	if stack.size() < 3:
+		return stack.duplicate()
+	var result := stack.duplicate()
+	var middle: Array = result.slice(1, result.size() - 1)
+	middle.sort()
+	for i in range(middle.size()):
+		result[i + 1] = middle[i]
+	return result
+
+
+func stacks_match(served_stack: Array, order_stack: Array) -> bool:
+	return normalize_stack(served_stack) == normalize_stack(order_stack)
+
+
 func validate_stack(served_stack: Array) -> bool:
 	for i in range(orders.size()):
-		if served_stack == orders[i]["stack"]:
+		if stacks_match(served_stack, orders[i]["stack"]):
 			print("SUCCESS")
 
 			orders.remove_at(i)
@@ -77,7 +92,7 @@ func validate_stack(served_stack: Array) -> bool:
 			update_ui()
 			return true
 
-	print("FAIL")
+	print("FAIL (servi : ", readable_single_order_text(served_stack), ")")
 	update_ui()
 	return false
 
