@@ -73,9 +73,7 @@ func _process_serving(served_stack) -> void:
 
 
 func _scaled_font_size() -> int:
-	var viewport_size := get_viewport().get_visible_rect().size
-	var min_dim := minf(viewport_size.x, viewport_size.y)
-	return clampi(roundi(min_dim * 0.045), 32, 56)
+	return UiScale.font(30)
 
 
 func _scaled_outline_size() -> int:
@@ -83,7 +81,7 @@ func _scaled_outline_size() -> int:
 
 
 func _scaled_float_offset() -> float:
-	return _scaled_font_size() * 1.25
+	return UiScale.px(36.0)
 
 
 func _feedback_world_pos() -> Vector3:

@@ -18,6 +18,10 @@ var level_running := false
 @onready var success_label = $CanvasLayer/GameHUD/SuccessCard/Margin/Content/Value
 @onready var success_hint_label = $CanvasLayer/GameHUD/SuccessCard/Margin/Content/Hint
 @onready var fail_label = $CanvasLayer/GameHUD/FailCard/Margin/Content/Value
+@onready var fail_hint_label = $CanvasLayer/GameHUD/FailCard/Margin/Content/Hint
+@onready var orders_panel = $CanvasLayer/OrdersPanel
+@onready var game_hud = $CanvasLayer/GameHUD
+@onready var timer_card = $CanvasLayer/TimerCard
 @onready var level_end_popup = $CanvasLayer/LevelEndPopup
 @onready var end_title_label = $CanvasLayer/LevelEndPopup/Panel/MarginContainer/VBoxContainer/TitleLabel
 @onready var end_score_label = $CanvasLayer/LevelEndPopup/Panel/MarginContainer/VBoxContainer/ScoreLabel
@@ -45,8 +49,68 @@ func _ready():
 	next_button.pressed.connect(_on_next_pressed)
 	menu_button.pressed.connect(_on_menu_pressed)
 
+	UiScale.scale_changed.connect(_apply_ui_scale)
 	level_end_popup.visible = false
+	_apply_ui_scale()
 	start_level()
+
+
+func _apply_ui_scale() -> void:
+	UiScale.apply_label($CanvasLayer/TimerCard/Margin/Content/Header/Title, 18)
+	UiScale.apply_label(timer_label, 34)
+	UiScale.apply_label($CanvasLayer/GameHUD/ScoreCard/Margin/Content/Header/Title, 18)
+	UiScale.apply_label(score_label, 34)
+	UiScale.apply_label($CanvasLayer/GameHUD/SuccessCard/Margin/Content/Header/Title, 18)
+	UiScale.apply_label(success_label, 34)
+	UiScale.apply_label(success_hint_label, 11)
+	UiScale.apply_label($CanvasLayer/GameHUD/FailCard/Margin/Content/Header/Title, 18)
+	UiScale.apply_label(fail_label, 34)
+	UiScale.apply_label(fail_hint_label, 11)
+	UiScale.apply_label(end_title_label, 26)
+	UiScale.apply_label(end_score_label, 18)
+	UiScale.apply_button(retry_button, 18)
+	UiScale.apply_button(next_button, 18)
+	UiScale.apply_button(menu_button, 18)
+	UiScale.apply_panel_min_width($CanvasLayer/GameHUD/ScoreCard, 200)
+	UiScale.apply_panel_min_width($CanvasLayer/GameHUD/SuccessCard, 200)
+	UiScale.apply_panel_min_width($CanvasLayer/GameHUD/FailCard, 200)
+
+	var hud_width := UiScale.px(204.0)
+	game_hud.offset_left = -hud_width
+	game_hud.offset_top = UiScale.px(16.0)
+	game_hud.offset_right = -UiScale.px(16.0)
+	game_hud.add_theme_constant_override("separation", roundi(UiScale.px(10.0)))
+
+	var timer_half_width := UiScale.px(100.0)
+	timer_card.offset_left = -timer_half_width
+	timer_card.offset_right = timer_half_width
+	timer_card.offset_top = UiScale.px(16.0)
+	timer_card.offset_bottom = UiScale.px(88.0)
+
+	orders_panel.offset_left = UiScale.px(16.0)
+	orders_panel.offset_top = UiScale.px(16.0)
+	orders_panel.offset_right = UiScale.px(16.0) + UiScale.px(460.0)
+	orders_panel.add_theme_constant_override("separation", roundi(UiScale.px(6.0)))
+
+	var popup_half_w := UiScale.px(180.0)
+	var popup_half_h := UiScale.px(130.0)
+	level_end_popup.offset_left = -popup_half_w
+	level_end_popup.offset_right = popup_half_w
+	level_end_popup.offset_top = -popup_half_h
+	level_end_popup.offset_bottom = popup_half_h
+
+	for icon_path in [
+		"CanvasLayer/TimerCard/Margin/Content/Header/Icon",
+		"CanvasLayer/GameHUD/ScoreCard/Margin/Content/Header/Icon",
+		"CanvasLayer/GameHUD/SuccessCard/Margin/Content/Header/Icon",
+		"CanvasLayer/GameHUD/FailCard/Margin/Content/Header/Icon",
+	]:
+		var icon := get_node_or_null(icon_path)
+		if icon is TextureRect:
+			var icon_size := UiScale.px(20.0)
+			icon.custom_minimum_size = Vector2(icon_size, icon_size)
+
+	UiScale.refresh_control_tree($CanvasLayer)
 
 func start_level():
 	var level_data = LevelManager.get_current_level()

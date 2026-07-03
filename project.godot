@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 GameState="*res://Scripts/game_state.gd"
 LevelManager="*res://Scripts/level_manager.gd"
+UiScale="*res://Scripts/ui_scale.gd"
 
 [physics]
 
