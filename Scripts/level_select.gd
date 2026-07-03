@@ -20,14 +20,14 @@ func _populate_levels() -> void:
 		var best := GameState.get_best_score(i)
 
 		if unlocked:
-			var label: String = level_data["name"]
+			var label: String = "%d. %s" % [i + 1, level_data["name"]]
 			if best > 0:
 				label += "  (meilleur : %d)" % best
 			button.text = label
 			var level_index := i
 			button.pressed.connect(func(): _on_level_selected(level_index))
 		else:
-			button.text = level_data["name"] + "  (verrouillé)"
+			button.text = "%d. %s  (verrouillé)" % [i + 1, level_data["name"]]
 			button.disabled = true
 
 		level_list.add_child(button)
