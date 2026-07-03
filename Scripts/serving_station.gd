@@ -9,6 +9,7 @@ const FEEDBACK_ANCHOR := Vector3(-0.75, 2.0, 0.35)
 @onready var _visual: Node3D = $Visual
 
 var _feedback_busy := false
+var _serve_queue: Array = []
 var _feedback_layer: CanvasLayer
 var _feedback_label: Label
 var _feedback_tween: Tween
@@ -38,24 +39,33 @@ func place_item(item):
 
 	var served_stack = item.stack.duplicate()
 	item.queue_free()
-
-	_process_serving(served_stack)
+	_enqueue_serve(served_stack)
 	return true
 
 
-func _process_serving(served_stack) -> void:
-	if _feedback_busy:
-		return
+func _enqueue_serve(served_stack: Array) -> void:
+	_serve_queue.append(served_stack)
+	_pump_serve_queue()
 
+
+func _pump_serve_queue() -> void:
+	if _feedback_busy or _serve_queue.is_empty():
+		return
+	_process_serving(_serve_queue.pop_front())
+
+
+func _process_serving(served_stack) -> void:
 	_feedback_busy = true
+	order_manager.set_process(false)
+
 	var result: Dictionary = order_manager.evaluate_stack(served_stack)
 
 	if result.get("success", false):
 		_flash_visual(true)
 		_begin_feedback("Commande #%d validée !" % result["order_number"], true)
-		await order_manager.resolve_success(result["index"])
+		var resolved: bool = await order_manager.resolve_success(result["order_number"])
 		await _wait_feedback_tween()
-		if game_manager != null and game_manager.has_method("register_success"):
+		if resolved and game_manager != null and game_manager.has_method("register_success"):
 			game_manager.register_success()
 	else:
 		_flash_visual(false)
@@ -69,7 +79,13 @@ func _process_serving(served_stack) -> void:
 		if game_manager != null and game_manager.has_method("register_fail"):
 			game_manager.register_fail()
 
+	_finish_serving()
+
+
+func _finish_serving() -> void:
+	order_manager.set_process(true)
 	_feedback_busy = false
+	_pump_serve_queue()
 
 
 func _scaled_font_size() -> int:
@@ -126,7 +142,7 @@ func _finish_feedback() -> void:
 
 
 func _wait_feedback_tween() -> void:
-	if _feedback_tween != null:
+	if _feedback_tween != null and is_instance_valid(_feedback_tween):
 		await _feedback_tween.finished
 
 

@@ -118,10 +118,18 @@ func evaluate_stack(served_stack: Array) -> Dictionary:
 	return {"success": false, "served_text": order_ingredients_text(served_stack)}
 
 
-func resolve_success(index: int) -> void:
+func resolve_success(order_number: int) -> bool:
+	var index := _find_order_index(order_number)
+	if index < 0:
+		return false
+
 	var card: Node = _get_card_at(index)
-	if card != null and card.has_method("play_success"):
+	if card != null and is_instance_valid(card) and card.has_method("play_success"):
 		await card.play_success()
+
+	index = _find_order_index(order_number)
+	if index < 0:
+		return false
 
 	orders.remove_at(index)
 
@@ -129,6 +137,14 @@ func resolve_success(index: int) -> void:
 		generate_order()
 
 	update_ui()
+	return true
+
+
+func _find_order_index(order_number: int) -> int:
+	for i in range(orders.size()):
+		if orders[i]["order_number"] == order_number:
+			return i
+	return -1
 
 
 func play_fail_feedback() -> void:

@@ -165,14 +165,13 @@ orders_container = NodePath("../CanvasLayer/OrdersPanel/OrdersList")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1434321409]
 
-[node name="OrdersPanel" type="VBoxContainer" parent="CanvasLayer"]
-anchors_preset = 0
+[node name="OrdersPanel" type="VBoxContainer" parent="CanvasLayer" unique_id=687339606]
 offset_left = 16.0
 offset_top = 16.0
 offset_right = 460.0
 theme_override_constants/separation = 6
 
-[node name="OrdersList" type="VBoxContainer" parent="CanvasLayer/OrdersPanel"]
+[node name="OrdersList" type="VBoxContainer" parent="CanvasLayer/OrdersPanel" unique_id=347770948]
 layout_mode = 2
 theme_override_constants/separation = 6
 
