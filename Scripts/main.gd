@@ -13,10 +13,11 @@ var level_running := false
 @onready var order_manager = $OrderManager
 @onready var camera = $Camera3D
 
-@onready var score_label = $CanvasLayer/ScoreLabel
-@onready var timer_label = $CanvasLayer/TimerLabel
-@onready var success_label = $CanvasLayer/SuccessLabel
-@onready var fail_label = $CanvasLayer/FailLabel
+@onready var score_label = $CanvasLayer/GameHUD/ScoreCard/Margin/Content/Value
+@onready var timer_label = $CanvasLayer/TimerCard/Margin/Content/Value
+@onready var success_label = $CanvasLayer/GameHUD/SuccessCard/Margin/Content/Value
+@onready var success_hint_label = $CanvasLayer/GameHUD/SuccessCard/Margin/Content/Hint
+@onready var fail_label = $CanvasLayer/GameHUD/FailCard/Margin/Content/Value
 @onready var level_end_popup = $CanvasLayer/LevelEndPopup
 @onready var end_title_label = $CanvasLayer/LevelEndPopup/Panel/MarginContainer/VBoxContainer/TitleLabel
 @onready var end_score_label = $CanvasLayer/LevelEndPopup/Panel/MarginContainer/VBoxContainer/ScoreLabel
@@ -85,16 +86,19 @@ func setup_level():
 
 func update_level_ui():
 	if score_label:
-		score_label.text = "Score : " + str(score)
+		score_label.text = str(score)
 
 	if timer_label:
-		timer_label.text = "Temps : " + str(int(ceil(level_time_left))) + "s"
+		timer_label.text = str(int(ceil(level_time_left))) + "s"
 
 	if success_label:
-		success_label.text = "Succès : " + str(success_count) + " / " + str(target_success)
+		success_label.text = str(success_count) + " / " + str(target_success)
+
+	if success_hint_label:
+		success_hint_label.text = "Objectif à atteindre"
 
 	if fail_label:
-		fail_label.text = "Erreurs : " + str(fail_count) + " / " + str(max_failures)
+		fail_label.text = str(fail_count) + " / " + str(max_failures)
 
 func _input(event):
 	if event is InputEventMouseButton and not event.pressed:

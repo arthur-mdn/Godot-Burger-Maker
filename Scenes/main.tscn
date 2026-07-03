@@ -8,6 +8,77 @@
 [ext_resource type="Script" uid="uid://c78nbccfty34y" path="res://Scripts/order_manager.gd" id="7_6bp64"]
 [ext_resource type="PackedScene" uid="uid://c2cnq2dxoljcq" path="res://Scenes/CuttingBoard.tscn" id="7_cb"]
 [ext_resource type="PackedScene" uid="uid://dyiu5aj8yyv8d" path="res://Scenes/ServingStation.tscn" id="8_344ge"]
+[ext_resource type="Texture2D" path="res://Assets/UI/icon_star.svg" id="9_star"]
+[ext_resource type="Texture2D" path="res://Assets/UI/icon_check.svg" id="10_check"]
+[ext_resource type="Texture2D" path="res://Assets/UI/icon_cross.svg" id="11_cross"]
+[ext_resource type="Texture2D" path="res://Assets/UI/icon_timer.svg" id="12_timer"]
+[ext_resource type="FontFile" path="res://Assets/Fonts/Nunito-ExtraBold.woff" id="13_font"]
+
+[sub_resource type="FontVariation" id="Font_title"]
+base_font = ExtResource("13_font")
+
+[sub_resource type="FontVariation" id="Font_value"]
+base_font = ExtResource("13_font")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_score"]
+bg_color = Color(0.06, 0.06, 0.08, 0.95)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.851, 0.239, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+shadow_color = Color(0, 0, 0, 0.4)
+shadow_size = 6
+shadow_offset = Vector2(0, 3)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_success"]
+bg_color = Color(0.06, 0.06, 0.08, 0.95)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.42, 0.796, 0.467, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+shadow_color = Color(0, 0, 0, 0.4)
+shadow_size = 6
+shadow_offset = Vector2(0, 3)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fail"]
+bg_color = Color(0.06, 0.06, 0.08, 0.95)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.42, 0.42, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+shadow_color = Color(0, 0, 0, 0.4)
+shadow_size = 6
+shadow_offset = Vector2(0, 3)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_timer"]
+bg_color = Color(0.06, 0.06, 0.08, 0.95)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.353, 0.667, 1, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+shadow_color = Color(0, 0, 0, 0.4)
+shadow_size = 6
+shadow_offset = Vector2(0, 3)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_7u77a"]
 size = Vector2(10, 10)
@@ -102,65 +173,208 @@ fit_content = true
 scroll_active = false
 autowrap_mode = 0
 
-[node name="ScoreLabel" type="RichTextLabel" parent="CanvasLayer" unique_id=505984678]
+[node name="TimerCard" type="PanelContainer" parent="CanvasLayer"]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -100.0
+offset_top = 16.0
+offset_right = 100.0
+offset_bottom = 88.0
+grow_horizontal = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_timer")
+
+[node name="Margin" type="MarginContainer" parent="CanvasLayer/TimerCard"]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 10
+
+[node name="Content" type="VBoxContainer" parent="CanvasLayer/TimerCard/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Header" type="HBoxContainer" parent="CanvasLayer/TimerCard/Margin/Content"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 6
+
+[node name="Icon" type="TextureRect" parent="CanvasLayer/TimerCard/Margin/Content/Header"]
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+texture = ExtResource("12_timer")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Title" type="Label" parent="CanvasLayer/TimerCard/Margin/Content/Header"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.353, 0.667, 1, 1)
+theme_override_fonts/font = SubResource("Font_title")
+theme_override_font_sizes/font_size = 18
+text = "TEMPS"
+vertical_alignment = 1
+
+[node name="Value" type="Label" parent="CanvasLayer/TimerCard/Margin/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = SubResource("Font_value")
+theme_override_font_sizes/font_size = 34
+text = "120s"
+horizontal_alignment = 1
+
+[node name="GameHUD" type="VBoxContainer" parent="CanvasLayer"]
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -40.0
-offset_bottom = 40.0
+offset_left = -220.0
+offset_top = 16.0
+offset_right = -16.0
 grow_horizontal = 0
+theme_override_constants/separation = 10
+
+[node name="ScoreCard" type="PanelContainer" parent="CanvasLayer/GameHUD"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_score")
+
+[node name="Margin" type="MarginContainer" parent="CanvasLayer/GameHUD/ScoreCard"]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 10
+
+[node name="Content" type="VBoxContainer" parent="CanvasLayer/GameHUD/ScoreCard/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Header" type="HBoxContainer" parent="CanvasLayer/GameHUD/ScoreCard/Margin/Content"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Icon" type="TextureRect" parent="CanvasLayer/GameHUD/ScoreCard/Margin/Content/Header"]
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+texture = ExtResource("9_star")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Title" type="Label" parent="CanvasLayer/GameHUD/ScoreCard/Margin/Content/Header"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.851, 0.239, 1)
+theme_override_fonts/font = SubResource("Font_title")
+theme_override_font_sizes/font_size = 18
 text = "SCORE"
-fit_content = true
-scroll_active = false
-autowrap_mode = 0
-autowrap_trim_flags = 0
-horizontal_alignment = 2
+vertical_alignment = 1
 
-[node name="TimerLabel" type="RichTextLabel" parent="CanvasLayer" unique_id=1094620887]
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -40.0
-offset_top = 20.0
-offset_bottom = 60.0
-grow_horizontal = 0
-text = "TIMER"
-fit_content = true
-scroll_active = false
-autowrap_mode = 0
-autowrap_trim_flags = 0
-horizontal_alignment = 2
+[node name="Value" type="Label" parent="CanvasLayer/GameHUD/ScoreCard/Margin/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = SubResource("Font_value")
+theme_override_font_sizes/font_size = 34
+text = "0"
+horizontal_alignment = 1
 
-[node name="SuccessLabel" type="RichTextLabel" parent="CanvasLayer" unique_id=1688725441]
-anchors_preset = 6
-anchor_left = 1.0
-anchor_top = 0.5
-anchor_right = 1.0
-anchor_bottom = 0.5
-offset_left = -68.0
-offset_top = -20.0
-offset_bottom = 20.0
-grow_horizontal = 0
-grow_vertical = 2
-text = "SUCCESS"
-fit_content = true
-scroll_active = false
-autowrap_mode = 0
-autowrap_trim_flags = 0
+[node name="SuccessCard" type="PanelContainer" parent="CanvasLayer/GameHUD"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_success")
 
-[node name="FailLabel" type="RichTextLabel" parent="CanvasLayer" unique_id=1803385824]
-anchors_preset = 4
-anchor_top = 0.5
-anchor_bottom = 0.5
-offset_top = -20.0
-offset_right = 40.0
-offset_bottom = 20.0
-grow_vertical = 2
-text = "FAIL"
-fit_content = true
-scroll_active = false
-autowrap_mode = 0
-autowrap_trim_flags = 0
+[node name="Margin" type="MarginContainer" parent="CanvasLayer/GameHUD/SuccessCard"]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 10
+
+[node name="Content" type="VBoxContainer" parent="CanvasLayer/GameHUD/SuccessCard/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Header" type="HBoxContainer" parent="CanvasLayer/GameHUD/SuccessCard/Margin/Content"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Icon" type="TextureRect" parent="CanvasLayer/GameHUD/SuccessCard/Margin/Content/Header"]
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+texture = ExtResource("10_check")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Title" type="Label" parent="CanvasLayer/GameHUD/SuccessCard/Margin/Content/Header"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.42, 0.796, 0.467, 1)
+theme_override_fonts/font = SubResource("Font_title")
+theme_override_font_sizes/font_size = 18
+text = "RÉUSSITES"
+vertical_alignment = 1
+
+[node name="Value" type="Label" parent="CanvasLayer/GameHUD/SuccessCard/Margin/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = SubResource("Font_value")
+theme_override_font_sizes/font_size = 34
+text = "0"
+horizontal_alignment = 1
+
+[node name="Hint" type="Label" parent="CanvasLayer/GameHUD/SuccessCard/Margin/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.55, 0.55, 0.6, 1)
+theme_override_font_sizes/font_size = 10
+text = "Objectif à atteindre"
+horizontal_alignment = 1
+
+[node name="FailCard" type="PanelContainer" parent="CanvasLayer/GameHUD"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_fail")
+
+[node name="Margin" type="MarginContainer" parent="CanvasLayer/GameHUD/FailCard"]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 10
+
+[node name="Content" type="VBoxContainer" parent="CanvasLayer/GameHUD/FailCard/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Header" type="HBoxContainer" parent="CanvasLayer/GameHUD/FailCard/Margin/Content"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Icon" type="TextureRect" parent="CanvasLayer/GameHUD/FailCard/Margin/Content/Header"]
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+texture = ExtResource("11_cross")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Title" type="Label" parent="CanvasLayer/GameHUD/FailCard/Margin/Content/Header"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.42, 0.42, 1)
+theme_override_fonts/font = SubResource("Font_title")
+theme_override_font_sizes/font_size = 18
+text = "ERREURS"
+vertical_alignment = 1
+
+[node name="Value" type="Label" parent="CanvasLayer/GameHUD/FailCard/Margin/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = SubResource("Font_value")
+theme_override_font_sizes/font_size = 34
+text = "0"
+horizontal_alignment = 1
+
+[node name="Hint" type="Label" parent="CanvasLayer/GameHUD/FailCard/Margin/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.55, 0.55, 0.6, 1)
+theme_override_font_sizes/font_size = 10
+text = "Trop d'erreurs = défaite"
+horizontal_alignment = 1
 
 [node name="LevelEndPopup" type="PanelContainer" parent="CanvasLayer"]
 visible = false
