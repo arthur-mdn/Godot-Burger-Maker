@@ -11,6 +11,7 @@ const KAYKIT_VISUALS := {
 	1: preload("res://Assets/KayKit/gltf/crate_steak.gltf"),
 	2: preload("res://Assets/KayKit/gltf/crate_cheese.gltf"),
 	3: preload("res://Assets/KayKit/gltf/crate_tomatoes.gltf"),
+	4: preload("res://Assets/KayKit/gltf/crate_lettuce.gltf"),
 }
 
 const FALLBACK_COLORS := {
@@ -57,7 +58,7 @@ func _update_visual():
 		var model: Node3D = KAYKIT_VISUALS[item_type].instantiate()
 		visual_root.add_child(model)
 		match item_type:
-			0, 1, 2, 3:
+			0, 1, 2, 3, 4:
 				model.scale = Vector3(0.55, 0.55, 0.55)
 		return
 

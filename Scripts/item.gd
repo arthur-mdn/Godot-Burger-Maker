@@ -21,6 +21,8 @@ const CHEESE_SLICE_SCENE := preload("res://Assets/KayKit/gltf/food_ingredient_ch
 const TOMATO_WHOLE_SCENE := preload("res://Assets/KayKit/gltf/food_ingredient_tomato.gltf")
 const TOMATO_SLICES_SCENE := preload("res://Assets/KayKit/gltf/food_ingredient_tomato_slices.gltf")
 const TOMATO_SLICE_SCENE := preload("res://Assets/KayKit/gltf/food_ingredient_tomato_slice.gltf")
+const LETTUCE_WHOLE_SCENE := preload("res://Assets/KayKit/gltf/food_ingredient_lettuce.gltf")
+const LETTUCE_SLICE_SCENE := preload("res://Assets/KayKit/gltf/food_ingredient_lettuce_slice.gltf")
 const KAYKIT_BUN_SCALE := 1.45
 const KAYKIT_BUN_BOTTOM_HEIGHT := 0.29
 const KAYKIT_BUN_TOP_HEIGHT := 0.45
@@ -31,6 +33,9 @@ const KAYKIT_CHEESE_HEIGHT := 0.12
 const KAYKIT_TOMATO_SCALE := 0.95
 const KAYKIT_TOMATO_SLICES_SCALE := 1.0
 const KAYKIT_TOMATO_SLICE_SCALE := 1.1
+const KAYKIT_LETTUCE_SCALE := 0.95
+const KAYKIT_LETTUCE_SLICE_SCALE := 1.1
+const KAYKIT_LETTUCE_STACK_LIFT := 0.05
 
 var current_slot = null
 var stack = []
@@ -190,7 +195,8 @@ func rebuild_visual():
 
 		if t == ItemType.SALAD:
 			var in_burger_stack := stack.size() > 1
-			stack_top = _stack_place_model(_create_salad_visual(in_burger_stack), stack_top)
+			var lift := KAYKIT_LETTUCE_STACK_LIFT if in_burger_stack else 0.0
+			stack_top = _stack_place_model(_create_salad_visual(in_burger_stack), stack_top, lift)
 			continue
 
 		var mesh = MeshInstance3D.new()
@@ -206,14 +212,14 @@ func rebuild_visual():
 		stack_root.add_child(mesh)
 
 
-func _stack_place_model(model: Node3D, stack_top: float) -> float:
+func _stack_place_model(model: Node3D, stack_top: float, y_offset: float = 0.0) -> float:
 	stack_root.add_child(model)
 	var aabb := _combined_mesh_aabb(model)
 	if aabb.size.length_squared() < 0.000001:
-		model.position.y = stack_top
-		return stack_top + 0.1
-	model.position.y = stack_top - aabb.position.y
-	return stack_top + aabb.size.y
+		model.position.y = stack_top + y_offset
+		return stack_top + 0.1 + y_offset
+	model.position.y = stack_top - aabb.position.y + y_offset
+	return stack_top + aabb.size.y + y_offset
 
 
 func _combined_mesh_aabb(root: Node3D) -> AABB:
@@ -246,13 +252,14 @@ func _create_cheese_visual() -> Node3D:
 
 
 func _create_salad_visual(in_burger_stack: bool) -> Node3D:
-	var prepared := is_chopped or in_burger_stack
-	var mesh := MeshInstance3D.new()
-	mesh.mesh = BoxMesh.new()
-	var height := 0.08 if prepared else 0.15
-	mesh.scale = Vector3(0.9 if prepared else 1.0, height, 0.9 if prepared else 1.0)
-	mesh.material_override = _mat(Color(0.35, 0.9, 0.35) if prepared else Color(0.15, 0.65, 0.15))
-	return mesh
+	var model: Node3D
+	if is_chopped or in_burger_stack:
+		model = LETTUCE_SLICE_SCENE.instantiate()
+		model.scale = Vector3.ONE * KAYKIT_LETTUCE_SLICE_SCALE
+	else:
+		model = LETTUCE_WHOLE_SCENE.instantiate()
+		model.scale = Vector3.ONE * KAYKIT_LETTUCE_SCALE
+	return model
 
 
 func _create_tomato_visual(in_burger_stack: bool) -> Node3D:
