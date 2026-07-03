@@ -9,7 +9,6 @@ var target_success := 0
 var max_failures := 3
 var level_running := false
 
-@onready var level_manager = $LevelManager
 @onready var stations_root = $World/Stations
 @onready var order_manager = $OrderManager
 @onready var camera = $Camera3D
@@ -18,6 +17,14 @@ var level_running := false
 @onready var timer_label = $CanvasLayer/TimerLabel
 @onready var success_label = $CanvasLayer/SuccessLabel
 @onready var fail_label = $CanvasLayer/FailLabel
+@onready var level_end_popup = $CanvasLayer/LevelEndPopup
+@onready var end_title_label = $CanvasLayer/LevelEndPopup/Panel/MarginContainer/VBoxContainer/TitleLabel
+@onready var end_score_label = $CanvasLayer/LevelEndPopup/Panel/MarginContainer/VBoxContainer/ScoreLabel
+@onready var retry_button = $CanvasLayer/LevelEndPopup/Panel/MarginContainer/VBoxContainer/Buttons/RetryButton
+@onready var next_button = $CanvasLayer/LevelEndPopup/Panel/MarginContainer/VBoxContainer/Buttons/NextButton
+@onready var menu_button = $CanvasLayer/LevelEndPopup/Panel/MarginContainer/VBoxContainer/Buttons/MenuButton
+
+var last_win := false
 
 func _ready():
 	var items = get_tree().get_nodes_in_group("item")
@@ -29,11 +36,16 @@ func _ready():
 		d.item_spawned.connect(_on_item_spawned)
 
 	order_manager.order_expired.connect(_on_order_expired)
-	
+
+	retry_button.pressed.connect(_on_retry_pressed)
+	next_button.pressed.connect(_on_next_pressed)
+	menu_button.pressed.connect(_on_menu_pressed)
+
+	level_end_popup.visible = false
 	start_level()
 
 func start_level():
-	var level_data = level_manager.get_current_level()
+	var level_data = LevelManager.get_current_level()
 
 	success_count = 0
 	fail_count = 0
@@ -42,6 +54,8 @@ func start_level():
 	target_success = level_data["target_success"]
 	max_failures = level_data["max_failures"]
 	level_running = true
+	level_end_popup.visible = false
+	order_manager.set_process(true)
 
 	setup_level()
 
@@ -56,7 +70,7 @@ func start_level():
 	print("Time :", level_time_left)
 
 func setup_level():
-	var level_data = level_manager.get_current_level()
+	var level_data = LevelManager.get_current_level()
 	var active_names = level_data["active_stations"]
 
 	for station in stations_root.get_children():
@@ -154,6 +168,9 @@ func try_drop():
 	held_item = null
 
 func register_success():
+	if not level_running:
+		return
+
 	success_count += 1
 	score += 10
 
@@ -166,6 +183,9 @@ func register_success():
 		end_level(true)
 
 func register_fail():
+	if not level_running:
+		return
+
 	fail_count += 1
 	score -= 5
 
@@ -185,9 +205,38 @@ func end_level(win: bool):
 		return
 
 	level_running = false
+	order_manager.set_process(false)
+	last_win = win
 	update_level_ui()
 
 	if win:
+		GameState.unlock_after_level(LevelManager.current_level_index)
+		GameState.update_best_score(LevelManager.current_level_index, score)
 		print("LEVEL COMPLETE")
 	else:
 		print("LEVEL FAILED")
+
+	_show_end_popup(win)
+
+
+func _show_end_popup(win: bool) -> void:
+	end_title_label.text = "Niveau réussi !" if win else "Niveau échoué"
+	end_score_label.text = "Score : %d" % score
+	next_button.visible = win and LevelManager.has_next_level()
+	level_end_popup.visible = true
+
+
+func _on_retry_pressed() -> void:
+	level_end_popup.visible = false
+	start_level()
+
+
+func _on_next_pressed() -> void:
+	if not last_win or not LevelManager.has_next_level():
+		return
+	LevelManager.set_current_level(LevelManager.current_level_index + 1)
+	get_tree().reload_current_scene()
+
+
+func _on_menu_pressed() -> void:
+	GameState.go_to_level_select()

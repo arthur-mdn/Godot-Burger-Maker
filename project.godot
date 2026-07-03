@@ -11,9 +11,14 @@ config_version=5
 [application]
 
 config/name="BurgerMaker"
-run/main_scene="res://Scenes/main.tscn"
+run/main_scene="res://Scenes/MainMenu.tscn"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
+
+[autoload]
+
+GameState="*res://Scripts/game_state.gd"
+LevelManager="*res://Scripts/level_manager.gd"
 
 [physics]
 

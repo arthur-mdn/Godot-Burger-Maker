@@ -49,9 +49,18 @@ var levels = [
 
 var current_level_index := 0
 
+
+func get_level_count() -> int:
+	return levels.size()
+
+
+func set_current_level(index: int) -> void:
+	current_level_index = clampi(index, 0, levels.size() - 1)
+
+
 func get_current_level():
 	return levels[current_level_index]
 
-func next_level():
-	if current_level_index < levels.size() - 1:
-		current_level_index += 1
+
+func has_next_level() -> bool:
+	return current_level_index < levels.size() - 1
