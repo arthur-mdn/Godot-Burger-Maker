@@ -2,9 +2,7 @@
 
 Jeu de cuisine solo en 3D, inspiré d'*Overcooked*. Tu gères seul une cuisine sous pression : les commandes s'empilent, le chrono tourne, et chaque burger compte.
 
-Capture d'écran
-
----
+![Capture d'écran](Exports/BurgerMakerScreenshot.png)
 
 ## Le concept
 
