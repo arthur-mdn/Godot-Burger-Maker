@@ -8,11 +8,29 @@
 [ext_resource type="Script" uid="uid://c78nbccfty34y" path="res://Scripts/order_manager.gd" id="7_6bp64"]
 [ext_resource type="PackedScene" uid="uid://c2cnq2dxoljcq" path="res://Scenes/CuttingBoard.tscn" id="7_cb"]
 [ext_resource type="PackedScene" uid="uid://dyiu5aj8yyv8d" path="res://Scenes/ServingStation.tscn" id="8_344ge"]
-[ext_resource type="Texture2D" path="res://Assets/UI/icon_star.svg" id="9_star"]
-[ext_resource type="Texture2D" path="res://Assets/UI/icon_check.svg" id="10_check"]
-[ext_resource type="Texture2D" path="res://Assets/UI/icon_cross.svg" id="11_cross"]
-[ext_resource type="Texture2D" path="res://Assets/UI/icon_timer.svg" id="12_timer"]
-[ext_resource type="FontFile" path="res://Assets/Fonts/Nunito-ExtraBold.woff" id="13_font"]
+[ext_resource type="Texture2D" uid="uid://c7p7xxvi0fpn0" path="res://Assets/UI/icon_star.svg" id="9_star"]
+[ext_resource type="Texture2D" uid="uid://te77qiabjyht" path="res://Assets/UI/icon_check.svg" id="10_check"]
+[ext_resource type="Texture2D" uid="uid://pd6qodfaoxqy" path="res://Assets/UI/icon_cross.svg" id="11_cross"]
+[ext_resource type="Texture2D" uid="uid://buuuludl0trbt" path="res://Assets/UI/icon_timer.svg" id="12_timer"]
+[ext_resource type="FontFile" uid="uid://bciv5pntstqb2" path="res://Assets/Fonts/Nunito-ExtraBold.woff" id="13_font"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_7u77a"]
+size = Vector2(10, 10)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_timer"]
+bg_color = Color(0.06, 0.06, 0.08, 0.95)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.353, 0.667, 1, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+shadow_color = Color(0, 0, 0, 0.4)
+shadow_size = 6
+shadow_offset = Vector2(0, 3)
 
 [sub_resource type="FontVariation" id="Font_title"]
 base_font = ExtResource("13_font")
@@ -65,24 +83,6 @@ shadow_color = Color(0, 0, 0, 0.4)
 shadow_size = 6
 shadow_offset = Vector2(0, 3)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_timer"]
-bg_color = Color(0.06, 0.06, 0.08, 0.95)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.353, 0.667, 1, 1)
-corner_radius_top_left = 16
-corner_radius_top_right = 16
-corner_radius_bottom_right = 16
-corner_radius_bottom_left = 16
-shadow_color = Color(0, 0, 0, 0.4)
-shadow_size = 6
-shadow_offset = Vector2(0, 3)
-
-[sub_resource type="PlaneMesh" id="PlaneMesh_7u77a"]
-size = Vector2(10, 10)
-
 [node name="Main" type="Node3D" unique_id=1795970554]
 script = ExtResource("1_bo1nx")
 
@@ -126,10 +126,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.1184683, 0, -4.6752715)
 item_type = 5
 
 [node name="Cooking_1" parent="World/Stations" unique_id=342943021 instance=ExtResource("4_jjvhh")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.04156208, 0, -0.32542658)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.066, 0, -0.2860828)
 
 [node name="Cooking_2" parent="World/Stations" unique_id=1783589009 instance=ExtResource("4_jjvhh")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.06577778, 0, -1.9006033)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.06577778, 0, -2.030158)
 
 [node name="Cutting_1" parent="World/Stations" unique_id=1178119326 instance=ExtResource("7_cb")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3.3990796)
@@ -173,7 +173,7 @@ fit_content = true
 scroll_active = false
 autowrap_mode = 0
 
-[node name="TimerCard" type="PanelContainer" parent="CanvasLayer"]
+[node name="TimerCard" type="PanelContainer" parent="CanvasLayer" unique_id=402300884]
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
@@ -184,30 +184,30 @@ offset_bottom = 88.0
 grow_horizontal = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_timer")
 
-[node name="Margin" type="MarginContainer" parent="CanvasLayer/TimerCard"]
+[node name="Margin" type="MarginContainer" parent="CanvasLayer/TimerCard" unique_id=621004282]
 layout_mode = 2
 theme_override_constants/margin_left = 14
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 14
 theme_override_constants/margin_bottom = 10
 
-[node name="Content" type="VBoxContainer" parent="CanvasLayer/TimerCard/Margin"]
+[node name="Content" type="VBoxContainer" parent="CanvasLayer/TimerCard/Margin" unique_id=1229388971]
 layout_mode = 2
 theme_override_constants/separation = 4
 
-[node name="Header" type="HBoxContainer" parent="CanvasLayer/TimerCard/Margin/Content"]
+[node name="Header" type="HBoxContainer" parent="CanvasLayer/TimerCard/Margin/Content" unique_id=243714519]
 layout_mode = 2
-alignment = 1
 theme_override_constants/separation = 6
+alignment = 1
 
-[node name="Icon" type="TextureRect" parent="CanvasLayer/TimerCard/Margin/Content/Header"]
+[node name="Icon" type="TextureRect" parent="CanvasLayer/TimerCard/Margin/Content/Header" unique_id=616306272]
 custom_minimum_size = Vector2(20, 20)
 layout_mode = 2
 texture = ExtResource("12_timer")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Title" type="Label" parent="CanvasLayer/TimerCard/Margin/Content/Header"]
+[node name="Title" type="Label" parent="CanvasLayer/TimerCard/Margin/Content/Header" unique_id=195569180]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.353, 0.667, 1, 1)
 theme_override_fonts/font = SubResource("Font_title")
@@ -215,7 +215,7 @@ theme_override_font_sizes/font_size = 18
 text = "TEMPS RESTANT"
 vertical_alignment = 1
 
-[node name="Value" type="Label" parent="CanvasLayer/TimerCard/Margin/Content"]
+[node name="Value" type="Label" parent="CanvasLayer/TimerCard/Margin/Content" unique_id=944404638]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = SubResource("Font_value")
@@ -223,7 +223,7 @@ theme_override_font_sizes/font_size = 34
 text = "02:00"
 horizontal_alignment = 1
 
-[node name="GameHUD" type="VBoxContainer" parent="CanvasLayer"]
+[node name="GameHUD" type="VBoxContainer" parent="CanvasLayer" unique_id=1506379]
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
@@ -233,34 +233,34 @@ offset_right = -16.0
 grow_horizontal = 0
 theme_override_constants/separation = 10
 
-[node name="ScoreCard" type="PanelContainer" parent="CanvasLayer/GameHUD"]
+[node name="ScoreCard" type="PanelContainer" parent="CanvasLayer/GameHUD" unique_id=2037760708]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_score")
 
-[node name="Margin" type="MarginContainer" parent="CanvasLayer/GameHUD/ScoreCard"]
+[node name="Margin" type="MarginContainer" parent="CanvasLayer/GameHUD/ScoreCard" unique_id=112850167]
 layout_mode = 2
 theme_override_constants/margin_left = 14
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 14
 theme_override_constants/margin_bottom = 10
 
-[node name="Content" type="VBoxContainer" parent="CanvasLayer/GameHUD/ScoreCard/Margin"]
+[node name="Content" type="VBoxContainer" parent="CanvasLayer/GameHUD/ScoreCard/Margin" unique_id=1596741197]
 layout_mode = 2
 theme_override_constants/separation = 4
 
-[node name="Header" type="HBoxContainer" parent="CanvasLayer/GameHUD/ScoreCard/Margin/Content"]
+[node name="Header" type="HBoxContainer" parent="CanvasLayer/GameHUD/ScoreCard/Margin/Content" unique_id=2051558694]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="Icon" type="TextureRect" parent="CanvasLayer/GameHUD/ScoreCard/Margin/Content/Header"]
+[node name="Icon" type="TextureRect" parent="CanvasLayer/GameHUD/ScoreCard/Margin/Content/Header" unique_id=1140238694]
 custom_minimum_size = Vector2(20, 20)
 layout_mode = 2
 texture = ExtResource("9_star")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Title" type="Label" parent="CanvasLayer/GameHUD/ScoreCard/Margin/Content/Header"]
+[node name="Title" type="Label" parent="CanvasLayer/GameHUD/ScoreCard/Margin/Content/Header" unique_id=953600844]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.851, 0.239, 1)
 theme_override_fonts/font = SubResource("Font_title")
@@ -268,7 +268,7 @@ theme_override_font_sizes/font_size = 18
 text = "SCORE"
 vertical_alignment = 1
 
-[node name="Value" type="Label" parent="CanvasLayer/GameHUD/ScoreCard/Margin/Content"]
+[node name="Value" type="Label" parent="CanvasLayer/GameHUD/ScoreCard/Margin/Content" unique_id=1964121916]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = SubResource("Font_value")
@@ -276,34 +276,34 @@ theme_override_font_sizes/font_size = 34
 text = "0"
 horizontal_alignment = 1
 
-[node name="SuccessCard" type="PanelContainer" parent="CanvasLayer/GameHUD"]
+[node name="SuccessCard" type="PanelContainer" parent="CanvasLayer/GameHUD" unique_id=1531729567]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_success")
 
-[node name="Margin" type="MarginContainer" parent="CanvasLayer/GameHUD/SuccessCard"]
+[node name="Margin" type="MarginContainer" parent="CanvasLayer/GameHUD/SuccessCard" unique_id=874263334]
 layout_mode = 2
 theme_override_constants/margin_left = 14
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 14
 theme_override_constants/margin_bottom = 10
 
-[node name="Content" type="VBoxContainer" parent="CanvasLayer/GameHUD/SuccessCard/Margin"]
+[node name="Content" type="VBoxContainer" parent="CanvasLayer/GameHUD/SuccessCard/Margin" unique_id=2118069246]
 layout_mode = 2
 theme_override_constants/separation = 4
 
-[node name="Header" type="HBoxContainer" parent="CanvasLayer/GameHUD/SuccessCard/Margin/Content"]
+[node name="Header" type="HBoxContainer" parent="CanvasLayer/GameHUD/SuccessCard/Margin/Content" unique_id=382978577]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="Icon" type="TextureRect" parent="CanvasLayer/GameHUD/SuccessCard/Margin/Content/Header"]
+[node name="Icon" type="TextureRect" parent="CanvasLayer/GameHUD/SuccessCard/Margin/Content/Header" unique_id=1146523142]
 custom_minimum_size = Vector2(20, 20)
 layout_mode = 2
 texture = ExtResource("10_check")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Title" type="Label" parent="CanvasLayer/GameHUD/SuccessCard/Margin/Content/Header"]
+[node name="Title" type="Label" parent="CanvasLayer/GameHUD/SuccessCard/Margin/Content/Header" unique_id=1902378116]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.42, 0.796, 0.467, 1)
 theme_override_fonts/font = SubResource("Font_title")
@@ -311,7 +311,7 @@ theme_override_font_sizes/font_size = 18
 text = "RÉUSSITES"
 vertical_alignment = 1
 
-[node name="Value" type="Label" parent="CanvasLayer/GameHUD/SuccessCard/Margin/Content"]
+[node name="Value" type="Label" parent="CanvasLayer/GameHUD/SuccessCard/Margin/Content" unique_id=1694154257]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = SubResource("Font_value")
@@ -319,41 +319,41 @@ theme_override_font_sizes/font_size = 34
 text = "0"
 horizontal_alignment = 1
 
-[node name="Hint" type="Label" parent="CanvasLayer/GameHUD/SuccessCard/Margin/Content"]
+[node name="Hint" type="Label" parent="CanvasLayer/GameHUD/SuccessCard/Margin/Content" unique_id=1056804093]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.55, 0.55, 0.6, 1)
 theme_override_font_sizes/font_size = 10
 text = "Objectif à atteindre"
 horizontal_alignment = 1
 
-[node name="FailCard" type="PanelContainer" parent="CanvasLayer/GameHUD"]
+[node name="FailCard" type="PanelContainer" parent="CanvasLayer/GameHUD" unique_id=1277078288]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_fail")
 
-[node name="Margin" type="MarginContainer" parent="CanvasLayer/GameHUD/FailCard"]
+[node name="Margin" type="MarginContainer" parent="CanvasLayer/GameHUD/FailCard" unique_id=2124110592]
 layout_mode = 2
 theme_override_constants/margin_left = 14
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 14
 theme_override_constants/margin_bottom = 10
 
-[node name="Content" type="VBoxContainer" parent="CanvasLayer/GameHUD/FailCard/Margin"]
+[node name="Content" type="VBoxContainer" parent="CanvasLayer/GameHUD/FailCard/Margin" unique_id=883719043]
 layout_mode = 2
 theme_override_constants/separation = 4
 
-[node name="Header" type="HBoxContainer" parent="CanvasLayer/GameHUD/FailCard/Margin/Content"]
+[node name="Header" type="HBoxContainer" parent="CanvasLayer/GameHUD/FailCard/Margin/Content" unique_id=1841051811]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="Icon" type="TextureRect" parent="CanvasLayer/GameHUD/FailCard/Margin/Content/Header"]
+[node name="Icon" type="TextureRect" parent="CanvasLayer/GameHUD/FailCard/Margin/Content/Header" unique_id=166866961]
 custom_minimum_size = Vector2(20, 20)
 layout_mode = 2
 texture = ExtResource("11_cross")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Title" type="Label" parent="CanvasLayer/GameHUD/FailCard/Margin/Content/Header"]
+[node name="Title" type="Label" parent="CanvasLayer/GameHUD/FailCard/Margin/Content/Header" unique_id=845896080]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.42, 0.42, 1)
 theme_override_fonts/font = SubResource("Font_title")
@@ -361,7 +361,7 @@ theme_override_font_sizes/font_size = 18
 text = "ERREURS"
 vertical_alignment = 1
 
-[node name="Value" type="Label" parent="CanvasLayer/GameHUD/FailCard/Margin/Content"]
+[node name="Value" type="Label" parent="CanvasLayer/GameHUD/FailCard/Margin/Content" unique_id=1853536512]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = SubResource("Font_value")
@@ -369,14 +369,14 @@ theme_override_font_sizes/font_size = 34
 text = "0"
 horizontal_alignment = 1
 
-[node name="Hint" type="Label" parent="CanvasLayer/GameHUD/FailCard/Margin/Content"]
+[node name="Hint" type="Label" parent="CanvasLayer/GameHUD/FailCard/Margin/Content" unique_id=501148967]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.55, 0.55, 0.6, 1)
 theme_override_font_sizes/font_size = 10
 text = "Trop d'erreurs = défaite"
 horizontal_alignment = 1
 
-[node name="LevelEndPopup" type="PanelContainer" parent="CanvasLayer"]
+[node name="LevelEndPopup" type="PanelContainer" parent="CanvasLayer" unique_id=151944228]
 visible = false
 anchors_preset = 8
 anchor_left = 0.5
@@ -390,44 +390,44 @@ offset_bottom = 120.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Panel" type="PanelContainer" parent="CanvasLayer/LevelEndPopup"]
+[node name="Panel" type="PanelContainer" parent="CanvasLayer/LevelEndPopup" unique_id=1684137739]
 layout_mode = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/LevelEndPopup/Panel"]
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/LevelEndPopup/Panel" unique_id=2037114898]
 layout_mode = 2
 theme_override_constants/margin_left = 24
 theme_override_constants/margin_top = 24
 theme_override_constants/margin_right = 24
 theme_override_constants/margin_bottom = 24
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/LevelEndPopup/Panel/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/LevelEndPopup/Panel/MarginContainer" unique_id=1177379658]
 layout_mode = 2
 theme_override_constants/separation = 16
 
-[node name="TitleLabel" type="Label" parent="CanvasLayer/LevelEndPopup/Panel/MarginContainer/VBoxContainer"]
+[node name="TitleLabel" type="Label" parent="CanvasLayer/LevelEndPopup/Panel/MarginContainer/VBoxContainer" unique_id=585196830]
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
 text = "Niveau terminé"
 horizontal_alignment = 1
 
-[node name="ScoreLabel" type="Label" parent="CanvasLayer/LevelEndPopup/Panel/MarginContainer/VBoxContainer"]
+[node name="ScoreLabel" type="Label" parent="CanvasLayer/LevelEndPopup/Panel/MarginContainer/VBoxContainer" unique_id=1301909647]
 layout_mode = 2
 text = "Score : 0"
 horizontal_alignment = 1
 
-[node name="Buttons" type="HBoxContainer" parent="CanvasLayer/LevelEndPopup/Panel/MarginContainer/VBoxContainer"]
+[node name="Buttons" type="HBoxContainer" parent="CanvasLayer/LevelEndPopup/Panel/MarginContainer/VBoxContainer" unique_id=56626462]
 layout_mode = 2
-alignment = 1
 theme_override_constants/separation = 12
+alignment = 1
 
-[node name="RetryButton" type="Button" parent="CanvasLayer/LevelEndPopup/Panel/MarginContainer/VBoxContainer/Buttons"]
+[node name="RetryButton" type="Button" parent="CanvasLayer/LevelEndPopup/Panel/MarginContainer/VBoxContainer/Buttons" unique_id=1603672386]
 layout_mode = 2
 text = "Réessayer"
 
-[node name="NextButton" type="Button" parent="CanvasLayer/LevelEndPopup/Panel/MarginContainer/VBoxContainer/Buttons"]
+[node name="NextButton" type="Button" parent="CanvasLayer/LevelEndPopup/Panel/MarginContainer/VBoxContainer/Buttons" unique_id=1228112624]
 layout_mode = 2
 text = "Suivant"
 
-[node name="MenuButton" type="Button" parent="CanvasLayer/LevelEndPopup/Panel/MarginContainer/VBoxContainer/Buttons"]
+[node name="MenuButton" type="Button" parent="CanvasLayer/LevelEndPopup/Panel/MarginContainer/VBoxContainer/Buttons" unique_id=178951057]
 layout_mode = 2
 text = "Menu"
