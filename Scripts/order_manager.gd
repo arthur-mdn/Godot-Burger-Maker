@@ -2,9 +2,13 @@ extends Node
 
 signal order_expired
 
+const OrderCardScene := preload("res://Scenes/OrderCard.tscn")
+
+const INGREDIENT_NAMES := ["Pain", "Steak", "Fromage", "Tomate", "Salade", "Oignon"]
+
 var orders = []
 var available_orders = []
-@export var order_label: RichTextLabel
+@export var orders_container: VBoxContainer
 
 const MAX_ORDERS := 3
 const ORDER_TIME := 40.0
@@ -29,6 +33,7 @@ func start_orders(initial_count := 2):
 
 func _process(delta):
 	var expired_indexes = []
+	var orders_changed := false
 
 	for i in range(orders.size()):
 		orders[i]["time_left"] -= delta
@@ -41,11 +46,18 @@ func _process(delta):
 		print("ORDER FAILED :", readable_single_order_text(orders[index]["stack"]))
 		orders.remove_at(index)
 		emit_signal("order_expired")
+		orders_changed = true
 
+	var before_count := orders.size()
 	while orders.size() < MAX_ORDERS and available_orders.size() > 0:
 		generate_order()
+	if orders.size() != before_count:
+		orders_changed = true
 
-	update_ui()
+	if orders_changed:
+		update_ui()
+	else:
+		_refresh_order_times()
 
 func generate_order():
 	if orders.size() >= MAX_ORDERS:
@@ -62,7 +74,17 @@ func generate_order():
 	}
 
 	orders.append(new_order)
-	update_ui()
+
+func _refresh_order_times() -> void:
+	if orders_container == null:
+		return
+
+	for idx in range(orders.size()):
+		if idx >= orders_container.get_child_count():
+			break
+		var card = orders_container.get_child(idx)
+		if card.has_method("refresh_time"):
+			card.refresh_time(orders[idx]["time_left"], get_order_border_color(orders[idx]))
 
 func normalize_stack(stack: Array) -> Array:
 	if stack.size() < 3:
@@ -96,51 +118,45 @@ func validate_stack(served_stack: Array) -> bool:
 	update_ui()
 	return false
 
-func update_ui(highlight_index := -2, override_color := Color.WHITE):
-	if order_label == null:
+func update_ui() -> void:
+	if orders_container == null:
 		return
 
-	var text = ""
+	for child in orders_container.get_children():
+		child.queue_free()
 
 	for idx in range(orders.size()):
 		var order = orders[idx]
-		var line = "Commande " + str(idx + 1) + " : "
-		line += readable_single_order_text(order["stack"])
-		line += "   [" + str(int(ceil(order["time_left"]))) + "s]"
+		var card: PanelContainer = OrderCardScene.instantiate()
+		orders_container.add_child(card)
+		card.setup(
+			idx + 1,
+			order_ingredients_text(order["stack"]),
+			order["time_left"],
+			get_order_border_color(order)
+		)
 
-		var line_color = get_order_color(order)
-
-		if highlight_index == idx:
-			line_color = override_color
-		elif highlight_index == -1:
-			line_color = override_color
-
-		line = "[color=" + line_color.to_html() + "]" + line + "[/color]"
-
-		text += line
-		if idx < orders.size() - 1:
-			text += "\n"
-
-	order_label.clear()
-	order_label.append_text(text)
-
-func get_order_color(order) -> Color:
+func get_order_border_color(order) -> Color:
 	var ratio = order["time_left"] / order["time_max"]
 
 	if ratio > 0.6:
-		return Color.WHITE
+		return Color(0.42, 0.796, 0.467, 1)
 	elif ratio > 0.3:
-		return Color.ORANGE
+		return Color(1.0, 0.65, 0.2, 1)
 	else:
-		return Color.RED
+		return Color(1.0, 0.42, 0.42, 1)
+
+func order_ingredients_text(order_stack: Array) -> String:
+	var parts: PackedStringArray = []
+	for ingredient_type in order_stack:
+		if ingredient_type >= 0 and ingredient_type < INGREDIENT_NAMES.size():
+			parts.append(INGREDIENT_NAMES[ingredient_type])
+	return " · ".join(parts)
 
 func readable_single_order_text(order_stack: Array) -> String:
-	var names = ["BUN", "STEAK", "CHEESE", "TOMATO", "SALAD", "ONION"]
-
 	var text = ""
 	for i in range(order_stack.size()):
-		text += names[order_stack[i]]
+		text += INGREDIENT_NAMES[order_stack[i]]
 		if i < order_stack.size() - 1:
 			text += " → "
-
 	return text

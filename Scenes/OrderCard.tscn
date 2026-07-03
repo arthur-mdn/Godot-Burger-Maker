@@ -1,0 +1,70 @@
+[gd_scene format=3 uid="uid://c8ordercard01"]
+
+[ext_resource type="Script" path="res://Scripts/order_card.gd" id="1_card"]
+[ext_resource type="FontFile" uid="uid://bciv5pntstqb2" path="res://Assets/Fonts/Nunito-ExtraBold.woff" id="2_font"]
+
+[sub_resource type="FontVariation" id="Font_number"]
+base_font = ExtResource("2_font")
+
+[sub_resource type="FontVariation" id="Font_body"]
+base_font = ExtResource("2_font")
+
+[sub_resource type="FontVariation" id="Font_time"]
+base_font = ExtResource("2_font")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_card"]
+bg_color = Color(0.06, 0.06, 0.08, 0.95)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.42, 0.796, 0.467, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 3
+shadow_offset = Vector2(0, 1)
+
+[node name="OrderCard" type="PanelContainer"]
+custom_minimum_size = Vector2(320, 0)
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+script = ExtResource("1_card")
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 5
+
+[node name="Row" type="HBoxContainer" parent="Margin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="Number" type="Label" parent="Margin/Row"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.75, 0.75, 0.8, 1)
+theme_override_fonts/font = SubResource("Font_number")
+theme_override_font_sizes/font_size = 13
+text = "#1"
+
+[node name="Ingredients" type="Label" parent="Margin/Row"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.95, 0.95, 0.97, 1)
+theme_override_fonts/font = SubResource("Font_body")
+theme_override_font_sizes/font_size = 14
+text = "Pain · Steak · Fromage · Pain"
+text_overrun_behavior = 3
+clip_text = true
+
+[node name="Time" type="Label" parent="Margin/Row"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = SubResource("Font_time")
+theme_override_font_sizes/font_size = 17
+text = "32s"
+horizontal_alignment = 2
