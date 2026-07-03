@@ -105,22 +105,47 @@ func stacks_match(served_stack: Array, order_stack: Array) -> bool:
 	return normalize_stack(served_stack) == normalize_stack(order_stack)
 
 
-func validate_stack(served_stack: Array) -> bool:
+func evaluate_stack(served_stack: Array) -> Dictionary:
 	for i in range(orders.size()):
 		if stacks_match(served_stack, orders[i]["stack"]):
-			print("SUCCESS")
-
-			orders.remove_at(i)
-
-			while orders.size() < MAX_ORDERS and available_orders.size() > 0:
-				generate_order()
-
-			update_ui()
-			return true
+			return {
+				"success": true,
+				"order_number": orders[i]["order_number"],
+				"index": i,
+			}
 
 	print("FAIL (servi : ", readable_single_order_text(served_stack), ")")
+	return {"success": false, "served_text": order_ingredients_text(served_stack)}
+
+
+func resolve_success(index: int) -> void:
+	var card: Node = _get_card_at(index)
+	if card != null and card.has_method("play_success"):
+		await card.play_success()
+
+	orders.remove_at(index)
+
+	while orders.size() < MAX_ORDERS and available_orders.size() > 0:
+		generate_order()
+
 	update_ui()
-	return false
+
+
+func play_fail_feedback() -> void:
+	if orders_container == null:
+		return
+
+	for idx in range(orders_container.get_child_count()):
+		var card = orders_container.get_child(idx)
+		if card.has_method("play_fail_shake") and idx < orders.size():
+			card.play_fail_shake()
+
+
+func _get_card_at(idx: int) -> Node:
+	if orders_container == null or idx >= orders_container.get_child_count():
+		return null
+	return orders_container.get_child(idx)
+
 
 func update_ui() -> void:
 	if orders_container == null:

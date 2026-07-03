@@ -61,6 +61,15 @@ text = "Pain · Steak · Fromage · Pain"
 text_overrun_behavior = 3
 clip_text = true
 
+[node name="Status" type="Label" parent="Margin/Row"]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.95, 0.45, 1)
+theme_override_fonts/font = SubResource("Font_time")
+theme_override_font_sizes/font_size = 20
+text = "✓"
+horizontal_alignment = 2
+
 [node name="Time" type="Label" parent="Margin/Row"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
